@@ -1,0 +1,77 @@
+/* Dark & Masculine Theme - Dashboard Specific Styles */
+
+#dashboard-summary {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+#username-display {
+    color: #4A90E2; /* Accent blue for username */
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.summary-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px; /* More space between cards */
+    margin-top: 30px;
+}
+
+.card {
+    background-color: #2D3748; /* Secondary Dark for card background */
+    border: 1px solid #4A5568; /* Darker border */
+    border-radius: 10px; /* More rounded corners */
+    padding: 25px; /* More padding */
+    flex: 1;
+    min-width: 280px; /* Slightly wider min-width for better appearance */
+    max-width: 320px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3); /* Stronger shadow */
+    text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    display: flex; /* Use flex for internal alignment */
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card:hover {
+    transform: translateY(-8px); /* More pronounced lift */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4); /* Stronger shadow on hover */
+}
+
+.card h3 {
+    color: #E2E8F0; /* Off-white for card titles */
+    margin-top: 0;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card p {
+    font-size: 2.5em; /* Larger font for values */
+    font-weight: bold;
+    color: #4CAF50; /* Success Green for positive values */
+    margin: 0; /* Remove default margin */
+    white-space: nowrap; /* Prevent wrapping for numbers */
+    overflow: hidden; /* Hide overflow if number is too large */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+/* Specific color for expenditure */
+#today-expenditure {
+    color: #E74C3C; /* Danger Red for expenditure */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .summary-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        max-width: 90%; /* Allow cards to take more width on smaller screens */
+    }
+}

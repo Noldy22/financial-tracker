@@ -1,0 +1,21 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
+  authDomain: "financial-tracker-ceace.firebaseapp.com",
+  projectId: "financial-tracker-ceace",
+  storageBucket: "financial-tracker-ceace.firebasestorage.app",
+  messagingSenderId: "434356653815",
+  appId: "1:434356653815:web:c554a51d07536b135d8df2",
+  measurementId: "G-0LKDFM8CGQ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);

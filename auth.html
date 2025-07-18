@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Tracker - Login/Signup</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific styles for auth.html to center forms and ensure full page height */
+        body {
+            /* These are already in style.css, ensuring column layout and min-height */
+            /* display: flex; */
+            /* flex-direction: column; */
+            /* min-height: 100vh; */
+        }
+        
+        header {
+            position: static;
+        }
+
+        main {
+            flex: 1; /* Allows main content to grow and push footer down */
+            max-width: 500px;
+            width: 90%;
+            padding: 40px;
+            margin: 50px auto; /* Add top and bottom margin, center horizontally */
+            background-color: #2D3748;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            border: 1px solid #4A5568;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        footer {
+            position: static;
+            margin-top: auto;
+        }
+
+        /* Styles for the auth forms container */
+        .auth-container {
+            margin-bottom: 30px;
+            padding: 30px;
+            border: 1px solid #4A5568;
+            border-radius: 10px;
+            background-color: #1A202C;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .auth-container h2 {
+            color: #4A90E2;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #4A90E2;
+            padding-bottom: 10px;
+        }
+        .auth-container p {
+            margin-top: 20px;
+            color: #A0AEC0;
+        }
+        .auth-container p a {
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .auth-container p a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #E74C3C;
+            background-color: #3b1e22;
+            border: 1px solid #E74C3C;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* FLEXBOX FOR LABELS AND INPUTS (retained for general form styling, though not directly used by Google button) */
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative; 
+        }
+
+        .form-group label {
+            flex-basis: 100px;
+            text-align: right;
+            margin-right: 15px;
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #A0AEC0;
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="text"] {
+            flex-grow: 1;
+            width: auto;
+            padding: 12px;
+            border: 1px solid #4A5568;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #1A202C;
+            color: #E2E8F0;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            padding-right: 40px; 
+        }
+
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="text"]:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+            outline: none;
+        }
+
+        /* Password Toggle Icon Styling (can be removed if no password inputs) */
+        .toggle-password {
+            position: absolute;
+            right: 10px; 
+            cursor: pointer;
+            color: #A0AEC0; 
+            font-size: 1.2em;
+            transition: color 0.2s ease;
+            top: 50%;
+            transform: translateY(-50%); 
+            padding: 5px; 
+        }
+
+        .toggle-password:hover {
+            color: #4A90E2; 
+        }
+
+        .toggle-password.password-visible {
+            color: #4A90E2; 
+        }
+        
+        /* Removed Google Sign-in Button Styling from here */
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Financial Tracker</h1>
+    </header>
+
+    <main>
+        <div class="auth-container" id="auth-section">
+            <h2>Welcome!</h2>
+            <div class="error-message" id="auth-error-message"></div>
+            <p>Please sign in with Google to continue.</p>
+            <button id="google-signin-button" class="google-signin-button">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon">
+                Sign in with Google
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
+          authDomain: "financial-tracker-ceace.firebaseapp.com",
+          projectId: "financial-tracker-ceace",
+          storageBucket: "financial-tracker-ceace.firebasestorage.app",
+          messagingSenderId: "434356653815",
+          appId: "1:434356653815:web:c554a51d07536b135d8df2",
+          measurementId: "G-0LKDFM8CGQ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Export Auth and Firestore instances globally for now
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
