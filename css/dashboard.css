@@ -65,6 +65,44 @@
     color: #E74C3C; /* Danger Red for expenditure */
 }
 
+/* New/Updated Styles for Dashboard Sections */
+#dashboard-summary h2,
+#recent-transactions h2,
+#spending-chart h2 {
+    color: #4A90E2; /* Accent blue for section titles */
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4A5568; /* Subtle separator */
+    text-align: center;
+}
+
+#recent-transactions {
+    margin-top: 40px; /* Space above the recent transactions section */
+}
+
+/* Note: Table styling is primarily handled in style.css, but if you need dashboard-specific table tweaks, add them here. */
+
+#spending-chart {
+    margin-top: 40px; /* Space above the chart section */
+    padding: 20px;
+    background-color: #1A202C; /* Darker background for chart section */
+    border: 1px solid #4A5568;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.chart-container {
+    max-width: 800px; /* Max width for charts for better readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+canvas {
+    background-color: #2D3748; /* Chart background */
+    border-radius: 5px;
+    padding: 15px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .summary-cards {
@@ -73,5 +111,8 @@
     }
     .card {
         max-width: 90%; /* Allow cards to take more width on smaller screens */
+    }
+    #spending-chart {
+        padding: 15px;
     }
 }

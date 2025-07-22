@@ -1,0 +1,265 @@
+/* details.css */
+
+/* Removed the direct styling for #transaction-entry to move it into the modal */
+
+#transaction-actions {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.primary-button { /* General styling for action buttons */
+    background-color: #4A90E2; /* Accent Blue */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #3A7BBF; /* Slightly darker blue on hover */
+    transform: translateY(-2px);
+}
+
+.primary-button:active {
+    transform: translateY(0);
+}
+
+
+#transaction-list {
+    margin-top: 40px;
+    background-color: #1A202C; /* Darker background for the table section */
+    border: 1px solid #4A5568;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+#transaction-list h2,
+#transaction-entry h2 { /* Apply to h2 inside modal too */
+    color: #4A90E2; /* Accent blue for section titles */
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4A5568;
+    text-align: center;
+}
+
+
+.filters {
+    display: flex;
+    flex-wrap: wrap; /* Allow filters to wrap */
+    gap: 15px; /* Space between filter elements */
+    margin-bottom: 20px;
+    justify-content: center; /* Center filters */
+}
+
+.filters select,
+.filters input[type="date"] {
+    flex: 1; /* Allow filter inputs to grow */
+    min-width: 150px; /* Minimum width for inputs */
+    padding: 10px;
+    border: 1px solid #4A5568;
+    border-radius: 5px;
+    background-color: #2D3748; /* Darker background than main for filters */
+    color: #E2E8F0;
+    font-size: 0.95em;
+}
+
+.filters button {
+    padding: 10px 20px;
+    font-size: 0.95em;
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+    background-color: #3A7BBF;
+}
+
+/* Table styling is generally covered in style.css */
+/* Specific colors for transaction types in table */
+#transactions-tbody td:nth-child(2) { /* Targeting the 'Type' column */
+    font-weight: bold;
+}
+#transactions-tbody .income {
+    color: #2ECC71; /* Success Green */
+}
+#transactions-tbody .expense {
+    color: #E74C3C; /* Danger Red */
+}
+
+.action-buttons button {
+    background: none;
+    border: 1px solid #4A5568; /* Subtle border for action buttons */
+    color: #A0AEC0;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.85em;
+}
+
+.action-buttons button:hover {
+    background-color: #4A5568;
+    color: #E2E8F0;
+}
+
+.action-buttons .edit-btn:hover {
+    color: #4A90E2; /* Blue hover for edit */
+    border-color: #4A90E2;
+}
+
+.action-buttons .delete-btn:hover {
+    color: #E74C3C; /* Red hover for delete */
+    border-color: #E74C3C;
+}
+
+/* Message display for form submission feedback */
+.message {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: none; /* Hidden by default */
+}
+
+.message.success {
+    background-color: #28a74533; /* Light green with transparency */
+    color: #2ECC71;
+    border: 1px solid #2ECC71;
+}
+
+.message.error {
+    background-color: #dc354533; /* Light red with transparency */
+    color: #E74C3C;
+    border: 1px solid #E74C3C;
+}
+
+/* --- MODAL STYLES --- */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2000; /* Sit on top of everything */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    backdrop-filter: blur(5px); /* Blur the background */
+    -webkit-backdrop-filter: blur(5px); /* Safari support */
+    display: flex; /* Use flexbox for centering content */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+.modal-content {
+    background-color: #2D3748; /* Secondary dark for modal */
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #4A5568;
+    border-radius: 12px;
+    width: 90%; /* Adjust width as needed */
+    max-width: 700px; /* Max width for larger screens */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    position: relative; /* For close button positioning */
+    transform: scale(0.95); /* Initial scale for animation */
+    opacity: 0; /* Initial opacity for animation */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Animation for modal appearance */
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.close-button {
+    color: #A0AEC0;
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #E2E8F0;
+    text-decoration: none;
+}
+
+/* Adjust transaction-entry section styles when inside the modal */
+.modal-content #transaction-entry {
+    margin-bottom: 0; /* Remove external margin */
+    background-color: transparent; /* Remove background, let modal-content handle it */
+    border: none; /* Remove border */
+    padding: 0; /* Remove padding */
+    box-shadow: none; /* Remove shadow */
+}
+
+#transaction-form {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column layout by default */
+    gap: 20px; /* Space between form groups */
+    max-width: 100%; /* Form takes full width of modal content */
+    margin: 0; /* No external margin needed */
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    #transaction-form {
+        grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+    }
+    #transaction-form .form-group:last-of-type { /* Description takes full width */
+        grid-column: span 2;
+    }
+    #transaction-form button[type="submit"] {
+        grid-column: span 2; /* Button takes full width */
+        max-width: 300px; /* Limit button width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (max-width: 768px) {
+    #transaction-list {
+        padding: 20px;
+    }
+    .filters {
+        flex-direction: column; /* Stack filters vertically on small screens */
+        align-items: stretch; /* Stretch to full width */
+    }
+    .filters select,
+    .filters input[type="date"],
+    .filters button {
+        width: 100%; /* Full width for filter elements */
+        min-width: unset;
+    }
+    .modal-content {
+        width: 95%; /* Adjust modal width for very small screens */
+        padding: 20px;
+    }
+    .close-button {
+        font-size: 28px;
+        top: 5px;
+        right: 15px;
+    }
+}
+
+/* Blur effect for main content */
+.blur-background {
+    filter: blur(3px); /* Apply blur to main content */
+    pointer-events: none; /* Prevent interaction with blurred content */
+    user-select: none; /* Prevent selecting text on blurred content */
+}

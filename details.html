@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Tracker - Details</title>
+    <title>Financial Tracker - Transactions</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/details.css">
 </head>
@@ -13,45 +13,36 @@
         <nav>
             <ul>
                 <li><a href="index.html">Dashboard</a></li>
-                <li><a href="details.html">Details</a></li>
+                <li><a href="details.html" class="active">Transactions</a></li>
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <section id="transaction-entry">
-            <h2>Add New Transaction</h2>
-            <form id="transaction-form">
-                <div class="form-group">
-                    <label for="transaction-type">Type:</label>
-                    <select id="transaction-type" required>
-                        <option value="expense">Expense</option>
-                        <option value="income">Income</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="transaction-amount">Amount:</label>
-                    <input type="number" id="transaction-amount" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="transaction-category">Category:</label>
-                    <input type="text" id="transaction-category" placeholder="e.g., Food, Salary" required>
-                </div>
-                <div class="form-group">
-                    <label for="transaction-date">Date:</label>
-                    <input type="date" id="transaction-date" required>
-                </div>
-                <div class="form-group">
-                    <label for="transaction-description">Description (Optional):</label>
-                    <textarea id="transaction-description" rows="3"></textarea>
-                </div>
-                <button type="submit">Add Transaction</button>
-            </form>
+    <main id="main-content">
+        <section id="transaction-login-prompt" style="display: none; text-align: center; padding: 20px; color: #A0AEC0;">
+            <h2>Please log in to manage your transactions.</h2>
+            <p>You can <a href="auth.html">log in here</a>.</p>
+        </section>
+
+        <section id="transaction-actions">
+            <h2>Manage Transactions</h2>
+            <button id="open-add-transaction-modal" class="primary-button">Add New Transaction</button>
         </section>
 
         <section id="transaction-list">
             <h2>Your Transactions</h2>
+            <div class="filters">
+                <select id="filter-type">
+                    <option value="all">All Types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <input type="date" id="filter-start-date">
+                <input type="date" id="filter-end-date">
+                <button id="apply-filters">Apply Filters</button>
+                <button id="clear-filters">Clear Filters</button>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -60,11 +51,12 @@
                         <th>Category</th>
                         <th>Amount</th>
                         <th>Description</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="transactions-tbody">
                     <tr>
-                        <td colspan="5" style="text-align: center;">No transactions yet.</td>
+                        <td colspan="6" style="text-align: center; color: #A0AEC0;">Loading transactions...</td>
                     </tr>
                 </tbody>
             </table>
@@ -75,18 +67,49 @@
         <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
     </footer>
 
+    <div id="add-transaction-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <form id="transaction-form">
+                <h2 id="modal-form-title">Add New Transaction</h2> <div class="form-group">
+                    <label for="transaction-type">Type:</label>
+                    <select id="transaction-type" required>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transaction-amount">Amount (TZS):</label> <input type="number" id="transaction-amount" step="0.01" required placeholder="e.g., 50000.00">
+                </div>
+                <div class="form-group">
+                    <label for="transaction-category">Category:</label>
+                    <input type="text" id="transaction-category" required placeholder="e.g., Food, Salary, Rent">
+                </div>
+                <div class="form-group">
+                    <label for="transaction-date">Date:</label>
+                    <input type="date" id="transaction-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="transaction-description">Description (Optional):</label>
+                    <textarea id="transaction-description" rows="3" placeholder="e.g., Dinner with friends"></textarea>
+                </div>
+                <button type="submit" id="modal-submit-button">Add Transaction</button> <div id="form-message" class="message"></div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script>
         const firebaseConfig = {
-          apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
-          authDomain: "financial-tracker-ceace.firebaseapp.com",
-          projectId: "financial-tracker-ceace",
-          storageBucket: "financial-tracker-ceace.firebasestorage.app",
-          messagingSenderId: "434356653815",
-          appId: "1:434356653815:web:c554a51d07536b135d8df2",
-          measurementId: "G-0LKDFM8CGQ"
+            apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
+            authDomain: "financial-tracker-ceace.firebaseapp.com",
+            projectId: "financial-tracker-ceace",
+            storageBucket: "financial-tracker-ceace.firebasestorage.app",
+            messagingSenderId: "434356653815",
+            appId: "1:434356653815:web:c554a51d07536b135d8df2",
+            measurementId: "G-0LKDFM8CGQ"
         };
 
         // Initialize Firebase
