@@ -10,10 +10,11 @@
 <body>
     <header>
         <h1>Financial Tracker</h1>
+        <button class="hamburger-menu" id="hamburger-menu" aria-label="Toggle navigation">&#9776;</button>
         <nav>
-            <ul>
-                <li><a href="index.html" class="active">Dashboard</a></li>
-                <li><a href="details.html">Transactions</a></li>
+            <ul id="main-nav-list">
+                <li><a href="index.html" id="nav-dashboard">Dashboard</a></li>
+                <li><a href="details.html" id="nav-transactions">Transactions</a></li>
                 <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
@@ -71,7 +72,7 @@
                     <tr>
                         <td colspan="5" style="text-align: center; color: #A0AEC0;">Loading recent transactions...</td>
                     </tr>
-                </tbody>
+                    </tbody>
             </table>
         </section>
 
@@ -89,28 +90,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
-            authDomain: "financial-tracker-ceace.firebaseapp.com",
-            projectId: "financial-tracker-ceace",
-            storageBucket: "financial-tracker-ceace.firebasestorage.app",
-            messagingSenderId: "434356653815",
-            appId: "1:434356653815:web:c554a51d07536b135d8df2",
-            measurementId: "G-0LKDFM8CGQ"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        // Export Auth and Firestore instances globally for now
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script src="js/main.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script src="js/main.js" defer></script> <script src="js/dashboard.js" defer></script>
 </body>
 </html>

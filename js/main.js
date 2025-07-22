@@ -1,23 +1,50 @@
+// js/main.js
+
+// === Firebase Initialization ===
+const firebaseConfig = {
+    apiKey: "AIzaSyC5erEj7SLOaC5gl71jUVCUalu1Bv_e7cc",
+    authDomain: "financial-tracker-ceace.firebaseapp.com",
+    projectId: "financial-tracker-ceace",
+    storageBucket: "financial-tracker-ceace.firebasestorage.app",
+    messagingSenderId: "434356653815",
+    appId: "1:434356653815:web:c554a51d07536b135d8df2",
+    measurementId: "G-0LKDFM8CGQ"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Export Auth and Firestore instances globally (or make them accessible)
+const auth = firebase.auth();
+const db = firebase.firestore();
+// === End Firebase Initialization ===
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    const logoutButton = document.getElementById('logout-button');
-    const usernameDisplay = document.getElementById('username-display'); // For dashboard
+    // === Global Navigation and Hamburger Menu Logic ===
+    const hamburgerMenu = document.getElementById('hamburger-menu');
+    const mainNavList = document.getElementById('main-nav-list');
+
     // Selects only anchors within header nav ul li, excluding buttons.
     const navLinks = document.querySelectorAll('header nav ul li a'); 
 
-    // --- Function to Highlight Current Page in Navigation ---
+    // Function to Highlight Current Page in Navigation
     function highlightCurrentPage() {
         const path = window.location.pathname;
         navLinks.forEach(link => {
-            link.classList.remove('active-nav'); // Remove from all first
+            link.classList.remove('active'); // Use 'active' as per our CSS, not 'active-nav'
             const linkPath = new URL(link.href).pathname;
+            
             // Normalize paths for comparison (e.g., remove trailing slashes)
-            const normalizedPath = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
-            const normalizedLinkPath = linkPath.endsWith('/') && linkPath.length > 1 ? linkPath.slice(0, -1) : linkPath;
+            // Handle both root '/' and '/index.html' for the Dashboard link
+            const normalizedPath = (path.endsWith('/') && path.length > 1) ? path.slice(0, -1) : path;
+            const normalizedLinkPath = (linkPath.endsWith('/') && linkPath.length > 1) ? linkPath.slice(0, -1) : linkPath;
 
-            // Check if the link's path is a direct match or if it's the root index page
-            if (normalizedPath.includes(normalizedLinkPath) && normalizedLinkPath.length > 1 || 
-                (normalizedPath === '/' || normalizedPath.endsWith('/index.html')) && normalizedLinkPath.endsWith('/index.html')) {
-                link.classList.add('active-nav');
+            if (normalizedPath === normalizedLinkPath) {
+                link.classList.add('active'); // Add 'active' class
+            } else if ((normalizedPath === '/' || normalizedPath.endsWith('/index.html')) && normalizedLinkPath.endsWith('/index.html')) {
+                // Special case for root or index.html to highlight dashboard
+                link.classList.add('active');
             }
         });
     }
@@ -25,7 +52,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call highlight function on load
     highlightCurrentPage();
 
-    // --- Authentication State Listener ---
+    // Hamburger menu toggle logic
+    if (hamburgerMenu && mainNavList) {
+        hamburgerMenu.addEventListener('click', () => {
+            console.log("Hamburger menu clicked!"); // Debugging log
+            mainNavList.classList.toggle('active'); // Toggles 'active' class on the UL
+            hamburgerMenu.classList.toggle('active'); // Toggles 'active' on the button itself (for styling changes)
+        });
+
+        // Close menu if a nav link is clicked (good for UX on mobile)
+        mainNavList.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mainNavList.classList.contains('active')) {
+                    mainNavList.classList.remove('active');
+                    hamburgerMenu.classList.remove('active');
+                }
+            });
+        });
+    } else {
+        console.warn("Hamburger menu or main navigation list element(s) not found. This might be expected on pages without a header/nav or due to incorrect IDs.");
+    }
+    // === End Global Navigation and Hamburger Menu Logic ===
+
+
+    // === Authentication State Listener and Logout ===
+    const logoutButton = document.getElementById('logout-button');
+    const usernameDisplay = document.getElementById('username-display'); // For dashboard
+
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             // User is logged in
@@ -60,8 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.style.display = ''; // Revert to default display (ensure visible)
             });
             // Also ensure nav is visible if it was hidden for unauthenticated users
-            const headerNav = document.querySelector('header nav');
-            if (headerNav) headerNav.style.display = ''; // Show navigation
+            // const headerNav = document.querySelector('header nav');
+            // if (headerNav) headerNav.style.display = ''; // <-- REMOVED THIS LINE!
+
             if (logoutButton) logoutButton.style.display = 'inline-block'; // Show logout button
 
         } else {
@@ -71,23 +125,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // If we are on a protected page (index or details), redirect to auth.html
             if (!window.location.pathname.endsWith('auth.html')) {
                 if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('details.html') || window.location.pathname.endsWith('/')) {
-                     window.location.href = 'auth.html';
+                    window.location.href = 'auth.html';
                 }
             }
 
             // Hide protected content elements (or ensure they are hidden)
-            // For this setup, redirection handles most of it, but good to be explicit
             document.querySelectorAll('main, footer').forEach(el => {
                 el.style.display = 'none'; // Hide main content and footer
             });
-            const headerNav = document.querySelector('header nav');
-            if (headerNav) headerNav.style.display = 'none'; // Hide navigation
+            // const headerNav = document.querySelector('header nav');
+            // if (headerNav) headerNav.style.display = 'none'; // <-- REMOVED THIS LINE!
+
             if (logoutButton) logoutButton.style.display = 'none'; // Hide logout button
             if (usernameDisplay) usernameDisplay.textContent = 'Guest'; // Set a default for logged out state
         }
     });
 
-    // --- Logout Functionality ---
+    // Logout Functionality
     if (logoutButton) {
         logoutButton.addEventListener('click', async () => {
             try {

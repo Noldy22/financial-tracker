@@ -1,94 +1,149 @@
+/* General Global Styles - style.css */
+
+:root {
+    /* Define a central set of primary color variables for consistency across all CSS files */
+    --primary-text-color: #E2E8F0; /* Off-white for general text */
+    --secondary-text-color: #A0AEC0; /* Lighter grey for subtle text (e.g., footer, labels) */
+    --accent-blue: #4A90E2; /* Bright blue for accents (links, buttons, highlights) */
+    --success-green: #4CAF50; /* Green for income/positive */
+    --danger-red: #E74C3C; /* Red for expenses/negative */
+    --primary-dark-bg: #1A202C; /* Deep dark background */
+    --secondary-dark-bg: #2D3748; /* Secondary dark for cards, headers, footers */
+    --border-color: #4A5568; /* Subtle border/separator color */
+    --card-shadow: rgba(0,0,0,0.3);
+    --card-shadow-hover: rgba(0,0,0,0.4);
+    --border-radius-sm: 5px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 10px;
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 40px;
+}
+
 /* General Body and Layout */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1A202C; /* Primary Dark Background */
-    color: #E2E8F0; /* Off-white for general text */
+    background-color: var(--primary-dark-bg);
+    color: var(--primary-text-color);
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensures footer sticks to the bottom */
+    min-height: 100vh;
 }
 
 /* Header */
 header {
-    background-color: #2D3748; /* Secondary Dark */
-    padding: 20px 40px;
+    background-color: var(--secondary-dark-bg);
+    padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px var(--card-shadow);
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
 header h1 {
-    color: #4A90E2; /* Accent Blue */
+    color: var(--accent-blue);
     margin: 0;
     font-size: 1.8em;
 }
 
+/* Hamburger Menu Button (initially hidden on desktop) */
+.hamburger-menu {
+    display: none; /* Hide by default on larger screens */
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+    font-size: 2em;
+    cursor: pointer;
+    padding: 0 10px;
+    z-index: 1001; /* Ensure it's above other elements if positioned */
+    transition: color 0.3s ease;
+}
+
+.hamburger-menu:hover {
+    color: var(--accent-blue);
+}
+
+/* Navigation Container */
+header nav {
+    /* On desktop, nav will occupy the remaining space and align items */
+    display: flex; /* Ensure nav itself is a flex container */
+    justify-content: flex-end; /* Align ul to the right */
+    flex-grow: 1; /* Allow nav to grow and take available space */
+    /* No absolute positioning or max-height here for desktop */
+}
+
+/* Navigation List (Desktop default) */
 header nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    align-items: center; /* Crucial: Vertically align all nav items */
-}
-
-header nav ul li {
-    margin-left: 25px;
+    display: flex; /* Flex display for desktop layout */
+    align-items: center;
+    gap: var(--spacing-md); /* Space between nav items */
 }
 
 header nav ul li a,
-header nav ul li button { /* Targeting button as well for general styling */
-    color: #E2E8F0;
+header nav ul li button {
+    color: var(--primary-text-color);
     text-decoration: none;
     font-weight: 600;
     padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border: none; /* Remove default button border */
-    background: none; /* Remove default button background */
-    cursor: pointer; /* Indicate it's clickable */
-    font-family: inherit; /* Inherit font from body */
-    font-size: 1em; /* Ensure consistent font size */
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid transparent;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1em;
+    white-space: nowrap;
 }
 
 header nav ul li a:hover,
-header nav ul li button:hover { /* Hover for button */
-    background-color: #4A5568; /* Darker Grey on hover */
+header nav ul li button:hover {
+    background-color: var(--border-color);
     color: #fff;
+    border-color: var(--accent-blue);
 }
 
-/* MODIFIED: Style for active page - ONLY applies to <a> tags now */
-header nav ul li a.active-nav { 
-    background-color: #4A90E2; /* Accent Blue background */
-    color: #fff; /* White text */
-    pointer-events: none; /* Prevent clicking the active link */
+/* Active Navigation Link Styling */
+header nav ul li a.active {
+    background-color: var(--accent-blue);
+    color: var(--primary-dark-bg);
+    border-color: var(--accent-blue);
+    font-weight: bold;
+    pointer-events: none;
 }
-
+header nav ul li a.active:hover {
+    background-color: var(--accent-blue);
+    color: var(--primary-dark-bg);
+    border-color: var(--accent-blue);
+}
 
 /* Main Content Area */
 main {
-    flex: 1; /* Allows main content to grow and push footer down */
-    padding: 20px;
-    background-color: #2D3748; /* Secondary Dark for content area */
-    margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    flex: 1;
+    padding: var(--spacing-md);
+    background-color: var(--secondary-dark-bg);
+    margin: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 4px 10px var(--card-shadow);
 }
 
 /* Forms - General Styling */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-sm);
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    color: #A0AEC0; /* Light grey for labels */
+    margin-bottom: var(--spacing-xs);
+    color: var(--secondary-text-color);
     font-weight: 600;
 }
 
@@ -99,14 +154,14 @@ input[type="password"],
 input[type="date"],
 select,
 textarea {
-    width: calc(100% - 24px); /* Account for padding and border */
+    width: calc(100% - (var(--spacing-xs) * 2));
     padding: 12px;
-    border: 1px solid #4A5568; /* Darker border */
-    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
     font-size: 1em;
-    background-color: #1A202C; /* Dark input background */
-    color: #E2E8F0; /* Off-white text */
-    box-sizing: border-box; /* Include padding in the element's total width and height */
+    background-color: var(--primary-dark-bg);
+    color: var(--primary-text-color);
+    box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -117,57 +172,61 @@ input[type="password"]:focus,
 input[type="date"]:focus,
 select:focus,
 textarea:focus {
-    border-color: #4A90E2; /* Accent blue on focus */
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3); /* Blue glowing effect */
-    outline: none; /* Remove default outline */
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+    outline: none;
 }
 
 button[type="submit"],
-/* Ensure general button styling applies to theme buttons */
-button:not(.google-signin-button) { /* Exclude google-signin-button from this specific styling */
-    background-color: #4A90E2; /* Accent Blue */
+.standard-button { /* Use .standard-button for general purpose buttons, excludes logout specifically */
+    background-color: var(--accent-blue);
     color: white;
     padding: 12px 25px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     font-size: 1em;
     font-weight: 700;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 15px; /* Add some space above buttons */
+    margin-top: var(--spacing-sm);
+}
+/* Ensure logout button is styled by header nav ul li button */
+#logout-button {
+    /* No additional styling needed here if covered by header nav ul li button */
 }
 
+
 button[type="submit"]:hover,
-button:not(.google-signin-button):hover {
-    background-color: #3A7BBF; /* Slightly darker blue on hover */
-    transform: translateY(-2px); /* Slight lift effect */
+.standard-button:hover {
+    background-color: #3A7BBF;
+    transform: translateY(-2px);
 }
 
 button[type="submit"]:active,
-button:not(.google-signin-button):active {
-    transform: translateY(0); /* Press down effect */
+.standard-button:active {
+    transform: translateY(0);
 }
 
-/* Tables */
+/* Tables - General Styling (to be used across all tables) */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #1A202C;
-    border-radius: 8px;
-    overflow: hidden; /* Ensures border-radius applies to children */
+    margin-top: var(--spacing-md);
+    background-color: var(--primary-dark-bg);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
 }
 
 table th,
 table td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #4A5568; /* Darker grey lines */
-    color: #E2E8F0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-text-color);
 }
 
 table th {
-    background-color: #4A5568; /* Header background */
+    background-color: var(--border-color);
     color: #fff;
     font-weight: 700;
     text-transform: uppercase;
@@ -175,119 +234,34 @@ table th {
 }
 
 table tbody tr:hover {
-    background-color: #2D3748; /* Slight hover effect on rows */
-}
-
-/* Summary Cards (Dashboard) */
-.summary-cards {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.card {
-    background-color: #1A202C;
-    border: 1px solid #4A5568;
-    border-radius: 10px;
-    padding: 25px;
-    flex: 1;
-    min-width: 280px;
-    max-width: 350px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.card h3 {
-    color: #4A90E2;
-    margin-top: 0;
-    font-size: 1.4em;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #4A5568;
-    padding-bottom: 10px;
-}
-
-.card p {
-    font-size: 2em;
-    font-weight: 700;
-    color: #E2E8F0;
-    margin: 0;
+    background-color: var(--secondary-dark-bg);
 }
 
 /* Footer */
 footer {
-    background-color: #2D3748;
-    color: #A0AEC0;
+    background-color: var(--secondary-dark-bg);
+    color: var(--secondary-text-color);
     text-align: center;
-    padding: 15px 40px;
-    margin-top: auto; /* Pushes footer to the bottom */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    margin-top: auto;
+    box-shadow: 0 -2px 5px var(--card-shadow);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        padding: 15px 20px;
-    }
-
-    header nav ul {
-        margin-top: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    header nav ul li {
-        margin: 5px 10px;
-    }
-
-    main {
-        margin: 15px;
-        padding: 15px;
-    }
-
-    .summary-cards {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card {
-        min-width: unset;
-        width: 100%;
-        max-width: 90%;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    select,
-    textarea {
-        width: calc(100% - 20px); /* Adjust for smaller screens */
-        padding: 10px;
-    }
-}
-
-/* Added for Auth page form layout */
-.auth-container .form-group { /* Specificity for auth page form groups */
+/* Auth page specific form layout */
+.auth-container .form-group {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
     position: relative;
 }
 
-.auth-container .form-group label { /* Specificity for auth page labels */
+.auth-container .form-group label {
     flex-basis: 100px;
     text-align: right;
     margin-right: 15px;
     margin-bottom: 0;
     font-weight: 600;
-    color: #A0AEC0;
+    color: var(--secondary-text-color);
 }
 
 /* Password Toggle Icon Styling */
@@ -295,7 +269,7 @@ footer {
     position: absolute;
     right: 10px;
     cursor: pointer;
-    color: #A0AEC0;
+    color: var(--secondary-text-color);
     font-size: 1.2em;
     transition: color 0.2s ease;
     top: 50%;
@@ -304,20 +278,20 @@ footer {
 }
 
 .toggle-password:hover {
-    color: #4A90E2;
+    color: var(--accent-blue);
 }
 
 .toggle-password.password-visible {
-    color: #4A90E2;
+    color: var(--accent-blue);
 }
 
 /* Google Sign-in Button Styling */
 .google-signin-button {
-    background-color: #4A90E2; /* Your primary accent blue */
-    color: white; /* Keep text white for contrast */
+    background-color: var(--accent-blue);
+    color: white;
     padding: 12px 25px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     font-size: 1em;
     font-weight: 700;
@@ -327,17 +301,132 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Space between icon and text */
-    margin-left: auto; /* Center the button */
+    gap: 10px;
+    margin-left: auto;
     margin-right: auto;
 }
 
 .google-signin-button:hover {
-    background-color: #3A7BBF; /* Slightly darker blue on hover */
+    background-color: #3A7BBF;
     transform: translateY(-2px);
 }
 
 .google-signin-button img {
     width: 20px;
     height: 20px;
+}
+
+/* Responsive Design for Collapsible Navigation */
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm) var(--spacing-md);
+        flex-wrap: nowrap;
+    }
+
+    header h1 {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    .hamburger-menu {
+        display: block; /* Show the hamburger menu on small screens */
+    }
+
+    header nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--secondary-dark-bg);
+        box-shadow: 0 5px 10px var(--card-shadow);
+        overflow: hidden;
+        max-height: 0; /* Initially collapse the menu */
+        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+        z-index: 999;
+    }
+
+    header nav.active { /* Class added by JS when menu is open */
+        max-height: 100vh; /* This ensures it will always be tall enough */
+        padding-bottom: var(--spacing-sm);
+    }
+
+    /* CRITICAL CHANGE: Only apply flex display when nav is active on mobile */
+    header nav ul {
+        list-style: none;
+        margin: 0;
+        padding: var(--spacing-sm) 0;
+        gap: var(--spacing-xs);
+        width: 100%;
+        
+        display: none; /* Hide the UL by default on mobile */
+        flex-direction: column; /* Prepare for vertical stacking */
+        align-items: center; /* Center items when stacked */
+        
+        transition: opacity 0.3s ease 0.3s; /* Delay opacity for transition after max-height */
+        opacity: 0; /* Start hidden for fade-in */
+    }
+
+    header nav.active ul {
+        display: flex; /* Show the UL when nav is active */
+        opacity: 1; /* Fade in */
+    }
+
+    header nav ul li {
+        width: 100%;
+        text-align: center;
+        margin: 0;
+    }
+
+    header nav ul li a,
+    header nav ul li button {
+        width: calc(100% - (var(--spacing-md) * 2));
+        box-sizing: border-box;
+        display: block;
+        padding: 10px 0;
+    }
+
+    /* General responsiveness for main content and forms */
+    main {
+        margin: var(--spacing-sm);
+        padding: var(--spacing-sm);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    select,
+    textarea {
+        width: calc(100% - (var(--spacing-sm) * 2));
+        padding: 10px;
+    }
+}
+
+/* Further adjustments for very small screens if needed for auth forms */
+@media (max-width: 500px) {
+    .auth-container .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .auth-container .form-group label {
+        flex-basis: auto;
+        text-align: left;
+        margin-right: 0;
+        margin-bottom: var(--spacing-xs);
+    }
+    .auth-container input[type="text"],
+    .auth-container input[type="email"],
+    .auth-container input[type="password"] {
+        width: 100%;
+    }
+    .toggle-password {
+        right: var(--spacing-sm);
+        top: calc(50% + 15px); /* Adjust to be below the label if stacked */
+        transform: translateY(-50%);
+    }
 }
