@@ -44,6 +44,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    position: relative; /* Added: For absolute positioning of nav on mobile */
 }
 
 header h1 {
@@ -68,11 +69,14 @@ header h1 {
 .hamburger-menu:hover {
     color: var(--accent-blue);
 }
+.hamburger-menu.active { /* Style for when the menu is open */
+    color: var(--accent-blue);
+}
 
-/* Navigation Container */
+/* Navigation Container (Desktop default) */
 header nav {
     /* On desktop, nav will occupy the remaining space and align items */
-    display: flex; /* Ensure nav itself is a flex container */
+    /* Removed display: flex; from here for desktop */
     justify-content: flex-end; /* Align ul to the right */
     flex-grow: 1; /* Allow nav to grow and take available space */
     /* No absolute positioning or max-height here for desktop */
@@ -130,7 +134,8 @@ main {
     flex: 1;
     padding: var(--spacing-md);
     background-color: var(--secondary-dark-bg);
-    margin: var(--spacing-md);
+    margin: var(--spacing-md) auto; /* Changed: Added 'auto' for horizontal centering */
+    max-width: 1200px; /* Optional: Add a max-width for better readability on large screens */
     border-radius: var(--border-radius-md);
     box-shadow: 0 4px 10px var(--card-shadow);
 }
@@ -317,7 +322,6 @@ footer {
 }
 
 /* Responsive Design for Collapsible Navigation */
-
 @media (max-width: 768px) {
     header {
         flex-direction: row;
@@ -338,43 +342,34 @@ footer {
 
     header nav {
         position: absolute;
-        top: 100%;
+        top: 100%; /* Position right below the header */
         left: 0;
         width: 100%;
         background-color: var(--secondary-dark-bg);
         box-shadow: 0 5px 10px var(--card-shadow);
         overflow: hidden;
         max-height: 0; /* Initially collapse the menu */
-        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+        transition: max-height 0.3s ease-in-out;
         z-index: 999;
+        display: block; /* Important: Make it a block for max-height transition to work */
     }
 
     header nav.active { /* Class added by JS when menu is open */
-        max-height: 100vh; /* This ensures it will always be tall enough */
-        padding-bottom: var(--spacing-sm);
+        max-height: 300px; /* Adjust as needed, ensure it's larger than content */
     }
 
-    /* CRITICAL CHANGE: Only apply flex display when nav is active on mobile */
     header nav ul {
         list-style: none;
         margin: 0;
         padding: var(--spacing-sm) 0;
-        gap: var(--spacing-xs);
+        gap: 0; /* Remove gap for vertical stacking */
         width: 100%;
-        
-        display: none; /* Hide the UL by default on mobile */
-        flex-direction: column; /* Prepare for vertical stacking */
+        flex-direction: column; /* Stack vertically */
         align-items: center; /* Center items when stacked */
-        
-        transition: opacity 0.3s ease 0.3s; /* Delay opacity for transition after max-height */
-        opacity: 0; /* Start hidden for fade-in */
+        display: flex; /* Always flex on mobile, let max-height handle visibility */
+        opacity: 1; /* Keep opacity at 1, let max-height handle the effect */
     }
-
-    header nav.active ul {
-        display: flex; /* Show the UL when nav is active */
-        opacity: 1; /* Fade in */
-    }
-
+    
     header nav ul li {
         width: 100%;
         text-align: center;
@@ -387,7 +382,22 @@ footer {
         box-sizing: border-box;
         display: block;
         padding: 10px 0;
+        border-radius: 0; /* Make them full width within their container */
+        border: none; /* Remove border for cleaner look in mobile menu */
+        text-align: center; /* Added: Center text for both links and buttons */
     }
+    
+    header nav ul li a.active {
+        /* Maintain active state style */
+        background-color: var(--accent-blue);
+        color: var(--primary-dark-bg);
+    }
+    header nav ul li a:hover,
+    header nav ul li button:hover {
+        background-color: var(--border-color); /* Add hover for mobile */
+        color: var(--accent-blue);
+    }
+
 
     /* General responsiveness for main content and forms */
     main {
@@ -404,6 +414,44 @@ footer {
     textarea {
         width: calc(100% - (var(--spacing-sm) * 2));
         padding: 10px;
+    }
+
+    /* Table Responsiveness */
+    table thead {
+        display: none; /* Hide table headers on small screens */
+    }
+
+    table, tbody, tr, td {
+        display: block;
+        width: 100%;
+    }
+
+    table tr {
+        margin-bottom: var(--spacing-sm);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-md);
+        background-color: var(--secondary-dark-bg);
+        display: block;
+        padding: var(--spacing-sm);
+    }
+
+    table td {
+        border: none;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: var(--spacing-sm);
+        width: calc(50% - var(--spacing-sm));
+        text-align: left;
+        font-weight: bold;
+        color: var(--accent-blue);
+        text-transform: uppercase;
+        font-size: 0.8em;
     }
 }
 

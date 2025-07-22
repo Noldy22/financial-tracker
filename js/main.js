@@ -23,7 +23,9 @@ const db = firebase.firestore();
 document.addEventListener('DOMContentLoaded', () => {
     // === Global Navigation and Hamburger Menu Logic ===
     const hamburgerMenu = document.getElementById('hamburger-menu');
-    const mainNavList = document.getElementById('main-nav-list');
+    // We now select the <nav> element, as it's the one we'll apply 'active' to
+    const mainNav = document.querySelector('header nav'); 
+    const header = document.querySelector('header'); // Needed for blur-background logic on other pages
 
     // Selects only anchors within header nav ul li, excluding buttons.
     const navLinks = document.querySelectorAll('header nav ul li a'); 
@@ -32,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function highlightCurrentPage() {
         const path = window.location.pathname;
         navLinks.forEach(link => {
-            link.classList.remove('active'); // Use 'active' as per our CSS, not 'active-nav'
+            link.classList.remove('active'); // Use 'active' as per our CSS
             const linkPath = new URL(link.href).pathname;
             
             // Normalize paths for comparison (e.g., remove trailing slashes)
@@ -40,11 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const normalizedPath = (path.endsWith('/') && path.length > 1) ? path.slice(0, -1) : path;
             const normalizedLinkPath = (linkPath.endsWith('/') && linkPath.length > 1) ? linkPath.slice(0, -1) : linkPath;
 
-            if (normalizedPath === normalizedLinkPath) {
+            // Handle cases where the current path is just '/' or '/index.html'
+            const isDashboardLink = normalizedLinkPath.endsWith('/index.html') || normalizedLinkPath === '/';
+            const isCurrentPathDashboard = normalizedPath === '/' || normalizedPath.endsWith('/index.html');
+
+            if (normalizedPath === normalizedLinkPath || (isDashboardLink && isCurrentPathDashboard)) {
                 link.classList.add('active'); // Add 'active' class
-            } else if ((normalizedPath === '/' || normalizedPath.endsWith('/index.html')) && normalizedLinkPath.endsWith('/index.html')) {
-                // Special case for root or index.html to highlight dashboard
-                link.classList.add('active');
             }
         });
     }
@@ -53,24 +56,25 @@ document.addEventListener('DOMContentLoaded', () => {
     highlightCurrentPage();
 
     // Hamburger menu toggle logic
-    if (hamburgerMenu && mainNavList) {
+    if (hamburgerMenu && mainNav) { // Check if both elements exist
         hamburgerMenu.addEventListener('click', () => {
             console.log("Hamburger menu clicked!"); // Debugging log
-            mainNavList.classList.toggle('active'); // Toggles 'active' class on the UL
+            mainNav.classList.toggle('active'); // Toggles 'active' class on the <nav> element
             hamburgerMenu.classList.toggle('active'); // Toggles 'active' on the button itself (for styling changes)
+            console.log("Nav classes after toggle:", mainNav.classList); // Debugging
         });
 
         // Close menu if a nav link is clicked (good for UX on mobile)
-        mainNavList.querySelectorAll('a').forEach(link => {
+        mainNav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-                if (mainNavList.classList.contains('active')) {
-                    mainNavList.classList.remove('active');
+                if (mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
                     hamburgerMenu.classList.remove('active');
                 }
             });
         });
     } else {
-        console.warn("Hamburger menu or main navigation list element(s) not found. This might be expected on pages without a header/nav or due to incorrect IDs.");
+        console.warn("Hamburger menu button or main navigation element(s) not found. This might be expected on pages without a header/nav or due to incorrect IDs.");
     }
     // === End Global Navigation and Hamburger Menu Logic ===
 
@@ -112,10 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('main, footer').forEach(el => {
                 el.style.display = ''; // Revert to default display (ensure visible)
             });
-            // Also ensure nav is visible if it was hidden for unauthenticated users
-            // const headerNav = document.querySelector('header nav');
-            // if (headerNav) headerNav.style.display = ''; // <-- REMOVED THIS LINE!
-
+            
             if (logoutButton) logoutButton.style.display = 'inline-block'; // Show logout button
 
         } else {
@@ -133,9 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('main, footer').forEach(el => {
                 el.style.display = 'none'; // Hide main content and footer
             });
-            // const headerNav = document.querySelector('header nav');
-            // if (headerNav) headerNav.style.display = 'none'; // <-- REMOVED THIS LINE!
-
+            
             if (logoutButton) logoutButton.style.display = 'none'; // Hide logout button
             if (usernameDisplay) usernameDisplay.textContent = 'Guest'; // Set a default for logged out state
         }
