@@ -44,23 +44,46 @@
                 <button id="apply-filters" class="action-button">Apply Filters</button>
                 <button id="clear-filters" class="action-button">Clear Filters</button>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="transactions-tbody">
-                    <tr>
-                        <td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Loading transactions...</td>
-                    </tr>
+            <div class="table-container"> <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Loading transactions...</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Date">2025-07-27</td>
+                            <td data-label="Type" class="income">Income</td>
+                            <td data-label="Category">Salary</td>
+                            <td data-label="Amount">TZS 500000.00</td>
+                            <td data-label="Description">Monthly salary payment from employer.</td>
+                            <td data-label="Actions" class="action-buttons">
+                                <button class="edit-btn action-button">Edit</button>
+                                <button class="delete-btn action-button">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td data-label="Date">2025-07-26</td>
+                            <td data-label="Type" class="expense">Expense</td>
+                            <td data-label="Category">Utilities</td>
+                            <td data-label="Amount">TZS 35000.00</td>
+                            <td data-label="Description">Electricity bill payment for July.</td>
+                            <td data-label="Actions" class="action-buttons">
+                                <button class="edit-btn action-button">Edit</button>
+                                <button class="delete-btn action-button">Delete</button>
+                            </td>
+                        </tr>
                     </tbody>
-            </table>
+                </table>
+            </div>
         </section>
     </main>
 

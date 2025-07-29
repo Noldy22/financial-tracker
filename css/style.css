@@ -138,11 +138,11 @@ main {
     box-shadow: 0 4px 10px var(--card-shadow);
 }
 
-/* Section Titles (H2) - New Global Style */
+/* Section Titles (H2) - Global Style */
 .section-title {
     color: var(--accent-blue);
-    margin-bottom: var(--spacing-md); /* Adjusted for consistency */
-    padding-bottom: var(--spacing-sm); /* Adjusted for consistency */
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--border-color);
     text-align: center;
     font-size: 1.8em;
@@ -203,7 +203,6 @@ button[type="submit"],
     font-weight: 700;
     transition: background-color 0.3s ease, transform 0.2s ease;
     margin-top: var(--spacing-sm);
-    /* For buttons that should take full width on mobile but be limited on desktop */
     width: auto; /* Default for desktop */
 }
 
@@ -218,14 +217,20 @@ button[type="submit"]:active,
     transform: translateY(0);
 }
 
-/* Tables - General Styling (to be used across all tables) */
-table {
-    width: 100%;
-    border-collapse: collapse;
+/* Tables - General Styling */
+.table-container {
+    overflow-x: auto; /* Enables horizontal scrolling for tables if content overflows */
     margin-top: var(--spacing-md);
     background-color: var(--primary-dark-bg);
     border-radius: var(--border-radius-md);
-    overflow: hidden; /* Ensures border-radius applies to table content */
+    box-shadow: 0 4px 8px var(--card-shadow);
+}
+
+table {
+    width: 100%; /* Table takes full width of its container */
+    border-collapse: collapse;
+    min-width: 500px; /* Ensures a minimum width for the table even on small screens */
+    /* This min-width will trigger overflow-x: auto on the container */
 }
 
 table thead th {
@@ -236,6 +241,7 @@ table thead th {
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9em;
+    white-space: nowrap; /* Prevent header text from wrapping */
 }
 
 table tbody td {
@@ -243,7 +249,28 @@ table tbody td {
     border-bottom: 1px solid var(--border-color);
     color: var(--secondary-text-color);
     font-size: 0.9em;
+    white-space: nowrap; /* Keep content on a single line */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Show ellipsis for overflowing text */
+    max-width: 250px; /* Limits the max width of cell content, adjust as needed */
+    vertical-align: middle; /* Aligns content vertically */
 }
+
+/* Special handling for description column to allow wrapping */
+table tbody td.description-cell { /* You can add this class to your description td */
+    white-space: normal; /* Allow text to wrap */
+    word-break: break-word; /* Break long words if necessary */
+    max-width: 300px; /* Allow more width for descriptions */
+}
+
+
+table tbody td.action-buttons {
+    white-space: nowrap; /* Ensure buttons stay on one line */
+    overflow: visible; /* Allow buttons to go outside if necessary */
+    text-overflow: clip; /* Don't add ellipsis to buttons */
+    min-width: 120px; /* Ensure enough space for action buttons */
+}
+
 
 table tbody tr:last-child td {
     border-bottom: none; /* No border for the last row */
@@ -371,7 +398,7 @@ footer {
     height: 20px;
 }
 
-/* --- MODAL STYLES (Moved from details.css but made generic) --- */
+/* --- MODAL STYLES --- */
 .modal-overlay {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -390,14 +417,14 @@ footer {
 }
 
 .modal-content {
-    background-color: var(--secondary-dark-bg); /* Use variable */
+    background-color: var(--secondary-dark-bg);
     margin: auto;
     padding: 30px;
-    border: 1px solid var(--border-color); /* Use variable */
-    border-radius: var(--border-radius-lg); /* Use variable */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
     width: 90%; /* Adjust width as needed */
     max-width: 700px; /* Max width for larger screens */
-    box-shadow: 0 5px 15px var(--card-shadow); /* Use variable */
+    box-shadow: 0 5px 15px var(--card-shadow);
     position: relative; /* For close button positioning */
     transform: scale(0.95); /* Initial scale for animation */
     opacity: 0; /* Initial opacity for animation */
@@ -411,7 +438,7 @@ footer {
 }
 
 .close-button {
-    color: var(--secondary-text-color); /* Use variable */
+    color: var(--secondary-text-color);
     font-size: 32px;
     font-weight: bold;
     position: absolute;
@@ -423,33 +450,33 @@ footer {
 
 .close-button:hover,
 .close-button:focus {
-    color: var(--primary-text-color); /* Use variable */
+    color: var(--primary-text-color);
     text-decoration: none;
 }
 
 /* Adjust transaction-entry section styles when inside the modal */
 .modal-content #transaction-entry {
-    margin-bottom: 0; /* Remove external margin */
-    background-color: transparent; /* Remove background, let modal-content handle it */
-    border: none; /* Remove border */
-    padding: 0; /* Remove padding */
-    box-shadow: none; /* Remove shadow */
+    margin-bottom: 0;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
 }
 
 #transaction-form {
     display: grid;
     grid-template-columns: 1fr; /* Single column layout by default */
     gap: 20px; /* Space between form groups */
-    max-width: 100%; /* Form takes full width of modal content */
-    margin: 0; /* No external margin needed */
+    max-width: 100%;
+    margin: 0;
 }
 
 
 /* Blur effect for main content */
 .blur-background {
-    filter: blur(3px); /* Apply blur to main content */
-    pointer-events: none; /* Prevent interaction with blurred content */
-    user-select: none; /* Prevent selecting text on blurred content */
+    filter: blur(3px);
+    pointer-events: none;
+    user-select: none;
 }
 
 
@@ -459,62 +486,61 @@ footer {
 @media (max-width: 768px) {
     header {
         padding: var(--spacing-sm) var(--spacing-md);
-        flex-wrap: nowrap; /* Prevent wrapping header content */
+        flex-wrap: nowrap;
     }
 
     /* Hamburger Menu */
     .hamburger-menu {
-        display: block; /* Show the hamburger menu on small screens */
+        display: block;
     }
 
     /* Navigation Container (Mobile) */
     header nav {
         position: absolute;
-        top: 100%; /* Position right below the header */
+        top: 100%;
         left: 0;
         width: 100%;
         background-color: var(--secondary-dark-bg);
         box-shadow: 0 5px 10px var(--card-shadow);
         overflow: hidden;
-        max-height: 0; /* Initially collapse the menu */
+        max-height: 0;
         transition: max-height 0.3s ease-in-out;
         z-index: 999;
-        display: block; /* Important: Make it a block for max-height transition to work */
+        display: block;
     }
 
-    header nav.active { /* Class added by JS when menu is open */
-        max-height: 300px; /* Adjust as needed, ensure it's larger than content */
+    header nav.active {
+        max-height: 300px;
     }
 
     /* Navigation List (Mobile) */
     header nav ul {
-        flex-direction: column; /* Stack vertically */
-        align-items: center; /* Center items when stacked */
-        gap: 0; /* Remove gap for vertical stacking, padding below handles spacing */
-        padding: var(--spacing-sm) 0; /* Padding for the entire menu block */
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        padding: var(--spacing-sm) 0;
         width: 100%;
-        display: flex; /* Always flex on mobile, let max-height handle visibility */
+        display: flex;
     }
     
     header nav ul li {
-        width: 100%; /* Make each list item take full width */
-        text-align: center; /* Center text within the list item */
-        margin: 0; /* Remove any external margins */
+        width: 100%;
+        text-align: center;
+        margin: 0;
     }
 
     header nav ul li a,
     header nav ul li button {
-        width: 100%; /* Make links/buttons take full width of their LI */
-        box-sizing: border-box; /* Include padding/border in width */
-        display: block; /* Ensure it takes full width and height */
-        padding: 12px 0; /* Adjust vertical padding for clickable area */
-        border-radius: 0; /* Remove individual item border-radius for cleaner full-width look */
-        border: none; /* Remove border for cleaner look in mobile menu */
-        text-align: center; /* Center text for both links and buttons */
+        width: 100%;
+        box-sizing: border-box;
+        display: block;
+        padding: 12px 0;
+        border-radius: 0;
+        border: none;
+        text-align: center;
     }
     
     header nav ul li a.active {
-        /* Maintain active state style */
         background-color: var(--accent-blue);
         color: var(--primary-dark-bg);
     }
@@ -526,8 +552,8 @@ footer {
 
     /* General responsiveness for main content and forms */
     main {
-        margin: var(--spacing-sm);
-        padding: var(--spacing-sm);
+        margin: var(--spacing-sm); /* Reduced margin for smaller screens */
+        padding: var(--spacing-sm); /* Reduced padding for smaller screens */
     }
 
     input[type="text"],
@@ -537,67 +563,89 @@ footer {
     input[type="date"],
     select,
     textarea {
-        width: calc(100% - (var(--spacing-sm) * 2)); /* Adjust width for padding on mobile */
+        width: calc(100% - (var(--spacing-sm) * 2));
         padding: 10px;
     }
 
-    /* Table Responsiveness (Applies to all tables by default) */
-    table thead {
-        display: none; /* Hide table headers on small screens */
+    /* Table responsiveness (traditional table with scroll) */
+    .table-container {
+        /* On mobile, still rely on overflow-x auto */
+        padding: 0; /* Remove padding here, table will handle */
+        box-shadow: none; /* Remove outer shadow, table itself will have it */
     }
 
-    table, tbody, tr, td {
-        display: block;
-        width: 100%;
+    table {
+        min-width: 600px; /* Increased min-width for mobile tables to ensure scroll */
+        /* This ensures the table itself pushes past the screen width if needed, activating overflow-x */
+        box-shadow: 0 4px 8px var(--card-shadow); /* Re-added shadow to the table itself */
     }
 
-    table tr {
-        margin-bottom: var(--spacing-sm);
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius-md);
-        background-color: var(--secondary-dark-bg);
-        padding: var(--spacing-sm);
+    table thead th {
+        /* Headers remain visible on mobile for traditional table */
+        font-size: 0.8em; /* Slightly smaller font for headers */
+        padding: 10px 12px;
+        text-align: left; /* Ensure header is left-aligned */
+    }
+    
+    table tbody td {
+        /* Cells remain as standard table cells */
+        white-space: nowrap; /* Keep content on one line */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 8px 12px; /* Slightly reduced padding */
+        font-size: 0.85em; /* Slightly smaller font for cells */
+        text-align: left; /* *** THIS IS THE KEY FIX FOR ALIGNMENT *** */
     }
 
+    table tbody td.description-cell {
+        white-space: normal; /* Allow descriptions to wrap */
+        word-break: break-word;
+        max-width: 200px; /* Limit description width to prevent excessive stretching */
+    }
+    
+    /* Removed data-label specific CSS as we're not using the "cards" layout */
+    table thead, table tbody, table tr {
+        display: table-row-group; /* Reset to normal table display */
+        width: auto;
+    }
     table td {
-        border: none;
-        text-align: right;
-        padding-left: 50%; /* Make space for pseudo-element label */
-        position: relative;
-        font-size: 1em;
+        display: table-cell; /* Reset to normal table cell display */
+        width: auto;
+        padding-left: 12px; /* Reset padding */
+        position: static; /* Reset position */
+    }
+    table td::before {
+        content: none; /* Hide pseudo-elements (data-labels) */
+    }
+    table tr {
+        margin-bottom: 0; /* Remove margin between rows */
+        border: none; /* Remove individual row borders */
+        border-radius: 0; /* Remove individual row border-radius */
+        background-color: transparent; /* Remove individual row background */
+        padding: 0; /* Remove individual row padding */
+        box-shadow: none; /* Remove individual row shadow */
     }
 
-    table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: var(--spacing-sm);
-        width: calc(50% - var(--spacing-sm));
-        text-align: left;
-        font-weight: bold;
-        color: var(--accent-blue);
-        text-transform: uppercase;
-        font-size: 0.8em;
-    }
 
     /* Dashboard specific card adjustments for mobile */
     .summary-cards {
-        flex-direction: column; /* Stack cards vertically */
+        flex-direction: column;
         align-items: center;
-        gap: var(--spacing-sm); /* Reduce gap between stacked cards */
+        gap: var(--spacing-sm);
     }
 
     .card {
-        min-width: unset; /* Remove min-width constraint */
-        max-width: 95%; /* Allow cards to take almost full width */
-        padding: var(--spacing-sm); /* Reduce card padding */
+        min-width: unset;
+        max-width: 95%;
+        padding: var(--spacing-sm);
     }
 
     .card h3 {
-        font-size: 1.1em; /* Adjust card title font size */
+        font-size: 1.1em;
     }
 
     .card p {
-        font-size: 1.8em; /* Adjust card value font size */
+        font-size: 1.8em;
     }
 
     #spending-chart {
@@ -606,18 +654,18 @@ footer {
 
     /* Details specific filters and modal adjustments for mobile */
     .filters {
-        flex-direction: column; /* Stack filters vertically on small screens */
-        align-items: stretch; /* Stretch to full width */
+        flex-direction: column;
+        align-items: stretch;
     }
     .filters select,
     .filters input[type="date"],
     .filters button {
-        width: 100%; /* Full width for filter elements */
+        width: 100%;
         min-width: unset;
     }
 
     .modal-content {
-        width: 95%; /* Adjust modal width for very small screens */
+        width: 95%;
         padding: 20px;
     }
     .close-button {
@@ -626,7 +674,7 @@ footer {
         right: 15px;
     }
     button[type="submit"], .action-button {
-        width: 100%; /* Full width for action buttons on mobile */
+        width: 100%;
     }
 }
 
@@ -649,7 +697,7 @@ footer {
     }
     .toggle-password {
         right: var(--spacing-sm);
-        top: calc(50% + 15px); /* Adjust to be below the label if stacked */
+        top: calc(50% + 15px);
         transform: translateY(-50%);
     }
 }
@@ -658,21 +706,21 @@ footer {
 @media (min-width: 769px) and (max-width: 1024px) {
     .summary-cards {
         gap: var(--spacing-md);
-        justify-content: space-around; /* Distribute cards evenly */
+        justify-content: space-around;
     }
     .card {
-        max-width: 45%; /* Allow two cards per row */
+        max-width: 45%;
     }
 
     #transaction-form {
-        grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+        grid-template-columns: 1fr 1fr;
     }
-    #transaction-form .form-group:last-of-type { /* Description takes full width */
+    #transaction-form .form-group:last-of-type {
         grid-column: span 2;
     }
     #transaction-form button[type="submit"], .action-button {
-        grid-column: span 2; /* Button takes full width */
-        max-width: 300px; /* Limit button width */
+        grid-column: span 2;
+        max-width: 300px;
         margin-left: auto;
         margin-right: auto;
     }

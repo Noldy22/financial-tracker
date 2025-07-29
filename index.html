@@ -58,22 +58,37 @@
 
         <section id="recent-transactions">
             <h2 class="section-title">Recent Transactions</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody id="recent-transactions-tbody">
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--secondary-text-color);">Loading recent transactions...</td>
-                    </tr>
+            <div class="table-container"> <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-transactions-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--secondary-text-color);">Loading recent transactions...</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Date">2025-07-28</td>
+                            <td data-label="Type" class="expense">Expense</td>
+                            <td data-label="Category">Groceries</td>
+                            <td data-label="Amount">TZS 15000.00</td>
+                            <td data-label="Description">Weekly shopping at local market for vegetables and fruits.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Date">2025-07-27</td>
+                            <td data-label="Type" class="income">Income</td>
+                            <td data-label="Category">Salary</td>
+                            <td data-label="Amount">TZS 500000.00</td>
+                            <td data-label="Description">Monthly salary payment from employer.</td>
+                        </tr>
                     </tbody>
-            </table>
+                </table>
+            </div>
         </section>
 
         <section id="spending-chart" class="chart-container">

@@ -13,13 +13,47 @@
     margin-bottom: var(--spacing-lg);
 }
 
+/* Ensure the h2 containing username-display doesn't break it */
+#dashboard-summary h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap; /* Prevent wrapping of h2 content */
+    /* Remove text-overflow and white-space from h2 itself, as span handles it */
+    overflow: visible; /* Let content display */
+    text-overflow: clip; /* No ellipsis on parent h2 */
+    white-space: normal; /* Allow normal wrapping if other content is added */
+    /* Override section-title specific border/padding that might conflict with flex */
+    border-bottom: none; 
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+#dashboard-summary h2 .section-title {
+    /* Ensure the "Welcome," part of the h2 gets its styling but is not affected by flex display of its parent */
+    display: inline; /* Keep it inline with the span */
+    border-bottom: 2px solid var(--border-color); /* Retain original border/padding from section-title */
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md); /* Re-add margin if section-title is supposed to have it */
+    font-size: 1.8em; /* Match h2 font size */
+    flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+
 #username-display {
     color: var(--accent-blue);
     font-weight: bold;
-    font-size: 1.5em; /* Slightly larger for prominence */
-    display: block; /* Ensure it takes its own line */
-    margin-top: 10px;
+    font-size: inherit; /* Inherit font size from parent h2, making it the same as "Welcome," */
+    display: inline-block; /* Inline-block allows horizontal space and max-width */
+    vertical-align: middle; /* Align with "Welcome," */
+    margin-left: 0.25em; /* Add a small space after the comma */
+    padding: 0;
+    max-width: 300px; /* Give it a reasonable max-width to ensure ellipsis works */
+    white-space: nowrap; /* Keep on a single line */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis if content overflows */
 }
+
 
 .summary-cards {
     display: flex;
