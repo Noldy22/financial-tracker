@@ -38,48 +38,46 @@ header {
     background-color: var(--secondary-dark-bg);
     padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Pushes H1 left, Nav right */
     align-items: center;
     box-shadow: 0 2px 5px var(--card-shadow);
     position: sticky;
     top: 0;
     z-index: 1000;
-    position: relative; /* Added: For absolute positioning of nav on mobile */
 }
 
 header h1 {
     color: var(--accent-blue);
     margin: 0;
     font-size: 1.8em;
+    flex-shrink: 0; /* Prevent h1 from shrinking too much */
 }
 
 /* Hamburger Menu Button (initially hidden on desktop) */
 .hamburger-menu {
-    display: none; /* Hide by default on larger screens */
+    display: none; /* Hidden by default, shown in media query */
     background: none;
     border: none;
     color: var(--primary-text-color);
     font-size: 2em;
     cursor: pointer;
     padding: 0 10px;
-    z-index: 1001; /* Ensure it's above other elements if positioned */
+    z-index: 1001;
     transition: color 0.3s ease;
 }
 
 .hamburger-menu:hover {
     color: var(--accent-blue);
 }
-.hamburger-menu.active { /* Style for when the menu is open */
+.hamburger-menu.active {
     color: var(--accent-blue);
 }
 
 /* Navigation Container (Desktop default) */
 header nav {
-    /* On desktop, nav will occupy the remaining space and align items */
-    /* Removed display: flex; from here for desktop */
-    justify-content: flex-end; /* Align ul to the right */
     flex-grow: 1; /* Allow nav to grow and take available space */
-    /* No absolute positioning or max-height here for desktop */
+    display: flex; /* Ensure flex for centering ul on desktop */
+    justify-content: flex-end; /* Align ul to the right */
 }
 
 /* Navigation List (Desktop default) */
@@ -121,9 +119,9 @@ header nav ul li a.active {
     color: var(--primary-dark-bg);
     border-color: var(--accent-blue);
     font-weight: bold;
-    pointer-events: none;
+    pointer-events: none; /* Prevents clicking the active link */
 }
-header nav ul li a.active:hover {
+header nav ul li a.active:hover { /* Maintain active state on hover */
     background-color: var(--accent-blue);
     color: var(--primary-dark-bg);
     border-color: var(--accent-blue);
@@ -134,10 +132,20 @@ main {
     flex: 1;
     padding: var(--spacing-md);
     background-color: var(--secondary-dark-bg);
-    margin: var(--spacing-md) auto; /* Changed: Added 'auto' for horizontal centering */
-    max-width: 1200px; /* Optional: Add a max-width for better readability on large screens */
+    margin: var(--spacing-md) auto; /* Horizontal centering on larger screens */
+    max-width: 1200px;
     border-radius: var(--border-radius-md);
     box-shadow: 0 4px 10px var(--card-shadow);
+}
+
+/* Section Titles (H2) - New Global Style */
+.section-title {
+    color: var(--accent-blue);
+    margin-bottom: var(--spacing-md); /* Adjusted for consistency */
+    padding-bottom: var(--spacing-sm); /* Adjusted for consistency */
+    border-bottom: 2px solid var(--border-color);
+    text-align: center;
+    font-size: 1.8em;
 }
 
 /* Forms - General Styling */
@@ -182,8 +190,9 @@ textarea:focus {
     outline: none;
 }
 
+/* Global Button Styling */
 button[type="submit"],
-.standard-button { /* Use .standard-button for general purpose buttons, excludes logout specifically */
+.action-button { /* Use .action-button for general purpose buttons */
     background-color: var(--accent-blue);
     color: white;
     padding: 12px 25px;
@@ -194,21 +203,18 @@ button[type="submit"],
     font-weight: 700;
     transition: background-color 0.3s ease, transform 0.2s ease;
     margin-top: var(--spacing-sm);
+    /* For buttons that should take full width on mobile but be limited on desktop */
+    width: auto; /* Default for desktop */
 }
-/* Ensure logout button is styled by header nav ul li button */
-#logout-button {
-    /* No additional styling needed here if covered by header nav ul li button */
-}
-
 
 button[type="submit"]:hover,
-.standard-button:hover {
+.action-button:hover {
     background-color: #3A7BBF;
     transform: translateY(-2px);
 }
 
 button[type="submit"]:active,
-.standard-button:active {
+.action-button:active {
     transform: translateY(0);
 }
 
@@ -219,28 +225,72 @@ table {
     margin-top: var(--spacing-md);
     background-color: var(--primary-dark-bg);
     border-radius: var(--border-radius-md);
-    overflow: hidden;
+    overflow: hidden; /* Ensures border-radius applies to table content */
 }
 
-table th,
-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--primary-text-color);
-}
-
-table th {
+table thead th {
     background-color: var(--border-color);
     color: #fff;
+    padding: 12px 15px;
+    text-align: left;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9em;
 }
 
-table tbody tr:hover {
-    background-color: var(--secondary-dark-bg);
+table tbody td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--secondary-text-color);
+    font-size: 0.9em;
 }
+
+table tbody tr:last-child td {
+    border-bottom: none; /* No border for the last row */
+}
+
+table tbody tr:hover {
+    background-color: var(--border-color); /* Highlight row on hover */
+}
+
+/* Specific colors for transaction types in table */
+#transactions-tbody td:nth-child(2) { /* Targeting the 'Type' column */
+    font-weight: bold;
+}
+#transactions-tbody .income {
+    color: var(--success-green);
+}
+#transactions-tbody .expense {
+    color: var(--danger-red);
+}
+
+.action-buttons button {
+    background: none;
+    border: 1px solid var(--border-color); /* Subtle border for action buttons */
+    color: var(--secondary-text-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.85em;
+}
+
+.action-buttons button:hover {
+    background-color: var(--border-color);
+    color: var(--primary-text-color);
+}
+
+.action-buttons .edit-btn:hover {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.action-buttons .delete-btn:hover {
+    color: var(--danger-red);
+    border-color: var(--danger-red);
+}
+
 
 /* Footer */
 footer {
@@ -321,25 +371,103 @@ footer {
     height: 20px;
 }
 
-/* Responsive Design for Collapsible Navigation */
+/* --- MODAL STYLES (Moved from details.css but made generic) --- */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2000; /* Sit on top of everything */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    backdrop-filter: blur(5px); /* Blur the background */
+    -webkit-backdrop-filter: blur(5px); /* Safari support */
+    display: flex; /* Use flexbox for centering content */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+.modal-content {
+    background-color: var(--secondary-dark-bg); /* Use variable */
+    margin: auto;
+    padding: 30px;
+    border: 1px solid var(--border-color); /* Use variable */
+    border-radius: var(--border-radius-lg); /* Use variable */
+    width: 90%; /* Adjust width as needed */
+    max-width: 700px; /* Max width for larger screens */
+    box-shadow: 0 5px 15px var(--card-shadow); /* Use variable */
+    position: relative; /* For close button positioning */
+    transform: scale(0.95); /* Initial scale for animation */
+    opacity: 0; /* Initial opacity for animation */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Animation for modal appearance */
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.close-button {
+    color: var(--secondary-text-color); /* Use variable */
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--primary-text-color); /* Use variable */
+    text-decoration: none;
+}
+
+/* Adjust transaction-entry section styles when inside the modal */
+.modal-content #transaction-entry {
+    margin-bottom: 0; /* Remove external margin */
+    background-color: transparent; /* Remove background, let modal-content handle it */
+    border: none; /* Remove border */
+    padding: 0; /* Remove padding */
+    box-shadow: none; /* Remove shadow */
+}
+
+#transaction-form {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column layout by default */
+    gap: 20px; /* Space between form groups */
+    max-width: 100%; /* Form takes full width of modal content */
+    margin: 0; /* No external margin needed */
+}
+
+
+/* Blur effect for main content */
+.blur-background {
+    filter: blur(3px); /* Apply blur to main content */
+    pointer-events: none; /* Prevent interaction with blurred content */
+    user-select: none; /* Prevent selecting text on blurred content */
+}
+
+
+/* --- Responsive Design Media Queries --- */
+
+/* Mobile & Tablet Styles (up to 768px) */
 @media (max-width: 768px) {
     header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
         padding: var(--spacing-sm) var(--spacing-md);
-        flex-wrap: nowrap;
+        flex-wrap: nowrap; /* Prevent wrapping header content */
     }
 
-    header h1 {
-        flex-shrink: 1;
-        min-width: 0;
-    }
-
+    /* Hamburger Menu */
     .hamburger-menu {
         display: block; /* Show the hamburger menu on small screens */
     }
 
+    /* Navigation Container (Mobile) */
     header nav {
         position: absolute;
         top: 100%; /* Position right below the header */
@@ -358,33 +486,31 @@ footer {
         max-height: 300px; /* Adjust as needed, ensure it's larger than content */
     }
 
+    /* Navigation List (Mobile) */
     header nav ul {
-        list-style: none;
-        margin: 0;
-        padding: var(--spacing-sm) 0;
-        gap: 0; /* Remove gap for vertical stacking */
-        width: 100%;
         flex-direction: column; /* Stack vertically */
         align-items: center; /* Center items when stacked */
+        gap: 0; /* Remove gap for vertical stacking, padding below handles spacing */
+        padding: var(--spacing-sm) 0; /* Padding for the entire menu block */
+        width: 100%;
         display: flex; /* Always flex on mobile, let max-height handle visibility */
-        opacity: 1; /* Keep opacity at 1, let max-height handle the effect */
     }
     
     header nav ul li {
-        width: 100%;
-        text-align: center;
-        margin: 0;
+        width: 100%; /* Make each list item take full width */
+        text-align: center; /* Center text within the list item */
+        margin: 0; /* Remove any external margins */
     }
 
     header nav ul li a,
     header nav ul li button {
-        width: calc(100% - (var(--spacing-md) * 2));
-        box-sizing: border-box;
-        display: block;
-        padding: 10px 0;
-        border-radius: 0; /* Make them full width within their container */
+        width: 100%; /* Make links/buttons take full width of their LI */
+        box-sizing: border-box; /* Include padding/border in width */
+        display: block; /* Ensure it takes full width and height */
+        padding: 12px 0; /* Adjust vertical padding for clickable area */
+        border-radius: 0; /* Remove individual item border-radius for cleaner full-width look */
         border: none; /* Remove border for cleaner look in mobile menu */
-        text-align: center; /* Added: Center text for both links and buttons */
+        text-align: center; /* Center text for both links and buttons */
     }
     
     header nav ul li a.active {
@@ -394,10 +520,9 @@ footer {
     }
     header nav ul li a:hover,
     header nav ul li button:hover {
-        background-color: var(--border-color); /* Add hover for mobile */
+        background-color: var(--border-color);
         color: var(--accent-blue);
     }
-
 
     /* General responsiveness for main content and forms */
     main {
@@ -412,11 +537,11 @@ footer {
     input[type="date"],
     select,
     textarea {
-        width: calc(100% - (var(--spacing-sm) * 2));
+        width: calc(100% - (var(--spacing-sm) * 2)); /* Adjust width for padding on mobile */
         padding: 10px;
     }
 
-    /* Table Responsiveness */
+    /* Table Responsiveness (Applies to all tables by default) */
     table thead {
         display: none; /* Hide table headers on small screens */
     }
@@ -431,15 +556,15 @@ footer {
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-md);
         background-color: var(--secondary-dark-bg);
-        display: block;
         padding: var(--spacing-sm);
     }
 
     table td {
         border: none;
         text-align: right;
-        padding-left: 50%;
+        padding-left: 50%; /* Make space for pseudo-element label */
         position: relative;
+        font-size: 1em;
     }
 
     table td::before {
@@ -452,6 +577,56 @@ footer {
         color: var(--accent-blue);
         text-transform: uppercase;
         font-size: 0.8em;
+    }
+
+    /* Dashboard specific card adjustments for mobile */
+    .summary-cards {
+        flex-direction: column; /* Stack cards vertically */
+        align-items: center;
+        gap: var(--spacing-sm); /* Reduce gap between stacked cards */
+    }
+
+    .card {
+        min-width: unset; /* Remove min-width constraint */
+        max-width: 95%; /* Allow cards to take almost full width */
+        padding: var(--spacing-sm); /* Reduce card padding */
+    }
+
+    .card h3 {
+        font-size: 1.1em; /* Adjust card title font size */
+    }
+
+    .card p {
+        font-size: 1.8em; /* Adjust card value font size */
+    }
+
+    #spending-chart {
+        padding: var(--spacing-sm);
+    }
+
+    /* Details specific filters and modal adjustments for mobile */
+    .filters {
+        flex-direction: column; /* Stack filters vertically on small screens */
+        align-items: stretch; /* Stretch to full width */
+    }
+    .filters select,
+    .filters input[type="date"],
+    .filters button {
+        width: 100%; /* Full width for filter elements */
+        min-width: unset;
+    }
+
+    .modal-content {
+        width: 95%; /* Adjust modal width for very small screens */
+        padding: 20px;
+    }
+    .close-button {
+        font-size: 28px;
+        top: 5px;
+        right: 15px;
+    }
+    button[type="submit"], .action-button {
+        width: 100%; /* Full width for action buttons on mobile */
     }
 }
 
@@ -476,5 +651,29 @@ footer {
         right: var(--spacing-sm);
         top: calc(50% + 15px); /* Adjust to be below the label if stacked */
         transform: translateY(-50%);
+    }
+}
+
+/* Adjustments for medium screens (e.g., tablets - 769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .summary-cards {
+        gap: var(--spacing-md);
+        justify-content: space-around; /* Distribute cards evenly */
+    }
+    .card {
+        max-width: 45%; /* Allow two cards per row */
+    }
+
+    #transaction-form {
+        grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+    }
+    #transaction-form .form-group:last-of-type { /* Description takes full width */
+        grid-column: span 2;
+    }
+    #transaction-form button[type="submit"], .action-button {
+        grid-column: span 2; /* Button takes full width */
+        max-width: 300px; /* Limit button width */
+        margin-left: auto;
+        margin-right: auto;
     }
 }

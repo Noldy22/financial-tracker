@@ -1,42 +1,11 @@
 /* Dark & Masculine Theme - Dashboard Specific Styles */
 
 /*
-   IMPORTANT: This file should ONLY contain styles specific to the dashboard page.
-   General styles for body, header, nav, footer, and common responsive rules
-   should reside in style.css to avoid conflicts and maintain consistency.
+    IMPORTANT: This file should ONLY contain styles specific to the dashboard page.
+    General styles for body, header, nav, footer, section titles, and common responsive rules
+    should reside in style.css to avoid conflicts and maintain consistency.
+    Variables are now ONLY in style.css.
 */
-
-:root {
-    /* Define some primary color variables for consistency */
-    /* It's good practice to redefine these if you want to allow them
-       to be easily customized per page, but for global consistency,
-       they are usually defined once in the main style.css.
-       For now, we'll keep them here for clarity if you only load dashboard.css
-       on this page, but be aware of potential overriding.
-    */
-    --primary-text-color: #E2E8F0; /* Off-white for general text */
-    --secondary-text-color: #A0AEC0; /* Lighter grey for subtle text */
-    --accent-blue: #4A90E2; /* Bright blue for accents */
-    --success-green: #4CAF50; /* Green for income/positive */
-    --danger-red: #E74C3C; /* Red for expenses/negative */
-    --dark-bg: #1A202C; /* Primary dark background */
-    --secondary-dark-bg: #2D3748; /* Secondary dark for cards/elements */
-    --border-color: #4A5568; /* Border/separator color */
-    --card-shadow: rgba(0,0,0,0.3);
-    --card-shadow-hover: rgba(0,0,0,0.4);
-    --border-radius: 10px;
-    --spacing-lg: 40px;
-    --spacing-md: 25px;
-    --spacing-sm: 15px;
-}
-
-/* Main Content Area - Keeping main padding here is okay if it's specific */
-/* Note: `body` and `header` rules were removed as they are in style.css */
-main {
-    padding: var(--spacing-md);
-    max-width: 1200px;
-    margin: var(--spacing-md) auto;
-}
 
 /* Dashboard Summary Section */
 #dashboard-summary {
@@ -63,7 +32,7 @@ main {
 .card {
     background-color: var(--secondary-dark-bg);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-lg); /* Using larger border-radius from root */
     padding: var(--spacing-md);
     flex: 1;
     min-width: 280px;
@@ -85,14 +54,14 @@ main {
 .card h3 {
     color: var(--primary-text-color);
     margin-top: 0;
-    font-size: 1.2em; /* Adjusted for better card fit */
+    font-size: 1.2em;
     margin-bottom: var(--spacing-sm);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .card p {
-    font-size: 2em; /* Slightly reduced for better mobile fit */
+    font-size: 2em;
     font-weight: bold;
     color: var(--success-green);
     margin: 0;
@@ -101,78 +70,35 @@ main {
     text-overflow: ellipsis;
 }
 
-#today-expenditure {
+#current-balance, /* Ensure current balance also uses success green by default if positive */
+#savings-goal,
+#savings-progress,
+.income-card p {
+    color: var(--success-green);
+}
+
+#today-expenditure,
+.expense-card p {
     color: var(--danger-red);
 }
-.expense-card .card p { /* Ensure specific expense card is red */
-    color: var(--danger-red);
-}
 
 
-/* New/Updated Styles for Dashboard Sections (H2 titles) */
-#dashboard-summary h2,
-#recent-transactions h2,
-#spending-chart h2 {
-    color: var(--accent-blue);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--border-color);
-    text-align: center;
-    font-size: 1.8em; /* Consistent heading size */
-}
-
-/* Recent Transactions Table */
+/* Recent Transactions Table Section */
 #recent-transactions {
     margin-top: var(--spacing-lg);
-    background-color: var(--secondary-dark-bg); /* Add background for the section */
+    background-color: var(--secondary-dark-bg);
     padding: var(--spacing-md);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-md);
     box-shadow: 0 4px 8px var(--card-shadow);
-}
-
-/* General table styling is already in style.css.
-   Keeping only specific overrides if absolutely necessary.
-   It's generally better to make style.css's table styles robust.
-   These specific rules might be redundant if style.css is comprehensive.
-*/
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: var(--spacing-sm);
-}
-
-table thead th {
-    background-color: var(--border-color); /* This might be a slight override, if needed */
-    color: var(--primary-text-color);
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-table tbody td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--secondary-text-color);
-    font-size: 0.9em;
-}
-
-table tbody tr:last-child td {
-    border-bottom: none; /* No border for the last row */
-}
-
-table tbody tr:hover {
-    background-color: var(--border-color); /* Highlight row on hover */
 }
 
 /* Chart Section */
 #spending-chart {
     margin-top: var(--spacing-lg);
     padding: var(--spacing-md);
-    background-color: var(--secondary-dark-bg); /* Use secondary dark for consistency */
+    background-color: var(--secondary-dark-bg);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-md);
     box-shadow: 0 4px 8px var(--card-shadow);
 }
 
@@ -183,99 +109,8 @@ table tbody tr:hover {
 }
 
 canvas {
-    background-color: var(--dark-bg); /* Darker background for chart canvas */
+    background-color: var(--primary-dark-bg); /* Darker background for chart canvas */
     border-radius: 5px;
     padding: var(--spacing-sm);
-    width: 100% !important; /* Ensure canvas scales properly */
-    height: auto !important;
-}
-
-/* Footer - Removed. Should be solely in style.css */
-
-
-/* Responsive Adjustments (Mobile-First approach with Media Queries) */
-@media (max-width: 768px) {
-    /* Header/Nav responsive rules removed. They are now ONLY in style.css */
-    
-    main {
-        padding: var(--spacing-sm); /* Reduce padding on main content */
-    }
-
-    .summary-cards {
-        flex-direction: column; /* Stack cards vertically */
-        align-items: center;
-        gap: var(--spacing-sm); /* Reduce gap between stacked cards */
-    }
-
-    .card {
-        min-width: unset; /* Remove min-width constraint */
-        max-width: 95%; /* Allow cards to take almost full width */
-        padding: var(--spacing-sm); /* Reduce card padding */
-    }
-
-    .card h3 {
-        font-size: 1.1em; /* Adjust card title font size */
-    }
-
-    .card p {
-        font-size: 1.8em; /* Adjust card value font size */
-    }
-
-    /* Table responsiveness specific to the dashboard's recent transactions table */
-    table thead {
-        display: none; /* Hide table headers on small screens */
-    }
-
-    table, tbody, tr, td {
-        display: block; /* Make table elements behave as blocks */
-        width: 100%;
-    }
-
-    table tr {
-        margin-bottom: var(--spacing-sm);
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius);
-        background-color: var(--secondary-dark-bg);
-        display: block;
-        padding: var(--spacing-sm);
-    }
-
-    table td {
-        border: none; /* Remove individual cell borders */
-        text-align: right; /* Align value to the right */
-        padding-left: 50%; /* Make space for pseudo-element label */
-        position: relative;
-        font-size: 1em;
-    }
-
-    table td::before {
-        content: attr(data-label); /* Use data-label for the pseudo-element */
-        position: absolute;
-        left: var(--spacing-sm);
-        width: calc(50% - var(--spacing-sm));
-        text-align: left;
-        font-weight: bold;
-        color: var(--accent-blue); /* Label color */
-        text-transform: uppercase;
-        font-size: 0.8em;
-    }
-
-    /* Adjust specific data-labels from your HTML for table cells */
-    /* You'll need to add data-label attributes to your HTML <td> tags where needed */
-    /* e.g., <td data-label="Date">...</td> */
-
-    #spending-chart {
-        padding: var(--spacing-sm);
-    }
-}
-
-/* Adjustments for medium screens (e.g., tablets) */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .summary-cards {
-        gap: var(--spacing-md);
-        justify-content: space-around; /* Distribute cards evenly */
-    }
-    .card {
-        max-width: 45%; /* Allow two cards per row */
-    }
+    /* width and height are handled globally in style.css for responsiveness */
 }

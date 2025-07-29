@@ -21,18 +21,18 @@
     </header>
 
     <main id="main-content">
-        <section id="transaction-login-prompt" style="display: none; text-align: center; padding: 20px; color: #A0AEC0;">
-            <h2>Please log in to manage your transactions.</h2>
+        <section id="transaction-login-prompt" style="display: none; text-align: center; padding: 20px; color: var(--secondary-text-color);">
+            <h2 class="section-title">Please log in to manage your transactions.</h2>
             <p>You can <a href="auth.html">log in here</a>.</p>
         </section>
 
         <section id="transaction-actions">
-            <h2>Manage Transactions</h2>
-            <button id="open-add-transaction-modal" class="primary-button">Add New Transaction</button>
+            <h2 class="section-title">Manage Transactions</h2>
+            <button id="open-add-transaction-modal" class="action-button primary-button">Add New Transaction</button>
         </section>
 
         <section id="transaction-list">
-            <h2>Your Transactions</h2>
+            <h2 class="section-title">Your Transactions</h2>
             <div class="filters">
                 <select id="filter-type">
                     <option value="all">All Types</option>
@@ -41,8 +41,8 @@
                 </select>
                 <input type="date" id="filter-start-date">
                 <input type="date" id="filter-end-date">
-                <button id="apply-filters">Apply Filters</button>
-                <button id="clear-filters">Clear Filters</button>
+                <button id="apply-filters" class="action-button">Apply Filters</button>
+                <button id="clear-filters" class="action-button">Clear Filters</button>
             </div>
             <table>
                 <thead>
@@ -57,9 +57,9 @@
                 </thead>
                 <tbody id="transactions-tbody">
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #A0AEC0;">Loading transactions...</td>
+                        <td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Loading transactions...</td>
                     </tr>
-                </tbody>
+                    </tbody>
             </table>
         </section>
     </main>
@@ -72,7 +72,7 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <form id="transaction-form">
-                <h2 id="modal-form-title">Add New Transaction</h2>
+                <h2 id="modal-form-title" class="section-title">Add New Transaction</h2>
                 <div class="form-group">
                     <label for="transaction-type">Type:</label>
                     <select id="transaction-type" required>
@@ -96,7 +96,7 @@
                     <label for="transaction-description">Description (Optional):</label>
                     <textarea id="transaction-description" rows="3" placeholder="e.g., Dinner with friends"></textarea>
                 </div>
-                <button type="submit" id="modal-submit-button">Add Transaction</button>
+                <button type="submit" id="modal-submit-button" class="action-button">Add Transaction</button>
                 <div id="form-message" class="message"></div>
             </form>
         </div>
