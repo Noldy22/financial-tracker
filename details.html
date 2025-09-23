@@ -67,10 +67,6 @@
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
-    </footer>
-
     <div id="add-transaction-modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button" aria-label="Close modal">&times;</span>
@@ -103,6 +99,22 @@
             </form>
         </div>
     </div>
+    
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <h2 id="confirm-modal-title" class="section-title">Confirm Action</h2>
+            <p id="confirm-modal-text" style="color: var(--primary-text-color); text-align: center; margin: 20px 0;"></p>
+            <div class="confirm-modal-actions" style="display: flex; justify-content: center; gap: 15px;">
+                <button id="confirm-btn-cancel" class="action-button">Cancel</button>
+                <button id="confirm-btn-ok" class="action-button danger">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
+    </footer>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
