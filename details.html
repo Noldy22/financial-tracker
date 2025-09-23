@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Tracker - Transactions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/details.css">
 </head>
@@ -28,7 +32,7 @@
 
         <section id="transaction-actions">
             <h2 class="section-title">Manage Transactions</h2>
-            <button id="open-add-transaction-modal" class="action-button primary-button">Add New Transaction</button>
+            <button id="open-add-transaction-modal" class="action-button">Add New Transaction</button>
         </section>
 
         <section id="transaction-list">
@@ -39,12 +43,13 @@
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                 </select>
-                <input type="date" id="filter-start-date">
-                <input type="date" id="filter-end-date">
+                <input type="date" id="filter-start-date" aria-label="Start Date">
+                <input type="date" id="filter-end-date" aria-label="End Date">
                 <button id="apply-filters" class="action-button">Apply Filters</button>
                 <button id="clear-filters" class="action-button">Clear Filters</button>
             </div>
-            <div class="table-container"> <table>
+            <div class="table-container">
+                <table>
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -56,32 +61,7 @@
                         </tr>
                     </thead>
                     <tbody id="transactions-tbody">
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Loading transactions...</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Date">2025-07-27</td>
-                            <td data-label="Type" class="income">Income</td>
-                            <td data-label="Category">Salary</td>
-                            <td data-label="Amount">TZS 500000.00</td>
-                            <td data-label="Description">Monthly salary payment from employer.</td>
-                            <td data-label="Actions" class="action-buttons">
-                                <button class="edit-btn action-button">Edit</button>
-                                <button class="delete-btn action-button">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td data-label="Date">2025-07-26</td>
-                            <td data-label="Type" class="expense">Expense</td>
-                            <td data-label="Category">Utilities</td>
-                            <td data-label="Amount">TZS 35000.00</td>
-                            <td data-label="Description">Electricity bill payment for July.</td>
-                            <td data-label="Actions" class="action-buttons">
-                                <button class="edit-btn action-button">Edit</button>
-                                <button class="delete-btn action-button">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
@@ -93,8 +73,8 @@
 
     <div id="add-transaction-modal" class="modal-overlay">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <form id="transaction-form">
+            <span class="close-button" aria-label="Close modal">&times;</span>
+            <form id="transaction-form" novalidate>
                 <h2 id="modal-form-title" class="section-title">Add New Transaction</h2>
                 <div class="form-group">
                     <label for="transaction-type">Type:</label>
@@ -115,12 +95,11 @@
                     <label for="transaction-date">Date:</label>
                     <input type="date" id="transaction-date" required>
                 </div>
-                <div class="form-group">
-                    <label for="transaction-description">Description (Optional):</label>
+                <div class="form-group" style="grid-column: 1 / -1;"> <label for="transaction-description">Description (Optional):</label>
                     <textarea id="transaction-description" rows="3" placeholder="e.g., Dinner with friends"></textarea>
                 </div>
-                <button type="submit" id="modal-submit-button" class="action-button">Add Transaction</button>
-                <div id="form-message" class="message"></div>
+                <button type="submit" id="modal-submit-button" class="action-button" style="grid-column: 1 / -1; width: 100%;">Add Transaction</button>
+                <div id="form-message" class="message" style="grid-column: 1 / -1;"></div>
             </form>
         </div>
     </div>

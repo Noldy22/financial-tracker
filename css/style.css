@@ -2,28 +2,29 @@
 
 :root {
     /* Define a central set of primary color variables for consistency across all CSS files */
-    --primary-text-color: #E2E8F0; /* Off-white for general text */
-    --secondary-text-color: #A0AEC0; /* Lighter grey for subtle text (e.g., footer, labels) */
-    --accent-blue: #4A90E2; /* Bright blue for accents (links, buttons, highlights) */
-    --success-green: #4CAF50; /* Green for income/positive */
-    --danger-red: #E74C3C; /* Red for expenses/negative */
-    --primary-dark-bg: #1A202C; /* Deep dark background */
-    --secondary-dark-bg: #2D3748; /* Secondary dark for cards, headers, footers */
-    --border-color: #4A5568; /* Subtle border/separator color */
-    --card-shadow: rgba(0,0,0,0.3);
-    --card-shadow-hover: rgba(0,0,0,0.4);
-    --border-radius-sm: 5px;
+    --primary-text-color: #E0E0E0; /* Lighter grey for a softer look */
+    --secondary-text-color: #B0B0B0; /* A more subtle secondary text color */
+    --accent-blue: #007BFF; /* A vibrant blue for a modern feel */
+    --success-green: #28A745; /* A slightly richer green */
+    --danger-red: #DC3545; /* A more prominent red */
+    --primary-dark-bg: #121212; /* A true black for a premium, dark mode feel */
+    --secondary-dark-bg: #1E1E1E; /* A slightly lighter black for contrast */
+    --border-color: #333333; /* A more subtle border color */
+    --card-shadow: rgba(0, 0, 0, 0.2);
+    --card-shadow-hover: rgba(0, 0, 0, 0.3);
+    --border-radius-sm: 4px;
     --border-radius-md: 8px;
-    --border-radius-lg: 10px;
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 20px;
-    --spacing-lg: 40px;
+    --border-radius-lg: 12px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 32px;
+    --transition-speed: 0.3s; /* A variable for consistent animation speeds */
 }
 
 /* General Body and Layout */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Inter', sans-serif; /* A modern, clean font */
     margin: 0;
     padding: 0;
     background-color: var(--primary-dark-bg);
@@ -31,6 +32,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Header */
@@ -44,6 +47,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background-color var(--transition-speed) ease;
 }
 
 header h1 {
@@ -97,7 +101,7 @@ header nav ul li button {
     font-weight: 600;
     padding: 8px 15px;
     border-radius: var(--border-radius-sm);
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: all var(--transition-speed) ease; /* Animate all properties */
     border: 1px solid transparent;
     background: none;
     cursor: pointer;
@@ -108,7 +112,7 @@ header nav ul li button {
 
 header nav ul li a:hover,
 header nav ul li button:hover {
-    background-color: var(--border-color);
+    background-color: var(--accent-blue);
     color: #fff;
     border-color: var(--accent-blue);
 }
@@ -116,22 +120,22 @@ header nav ul li button:hover {
 /* Active Navigation Link Styling */
 header nav ul li a.active {
     background-color: var(--accent-blue);
-    color: var(--primary-dark-bg);
+    color: #fff;
     border-color: var(--accent-blue);
     font-weight: bold;
     pointer-events: none; /* Prevents clicking the active link */
 }
 header nav ul li a.active:hover { /* Maintain active state on hover */
     background-color: var(--accent-blue);
-    color: var(--primary-dark-bg);
+    color: #fff;
     border-color: var(--accent-blue);
 }
 
 /* Main Content Area */
 main {
     flex: 1;
-    padding: var(--spacing-md);
-    background-color: var(--secondary-dark-bg);
+    padding: var(--spacing-lg); /* Increased padding */
+    background-color: var(--primary-dark-bg);
     margin: var(--spacing-md) auto; /* Horizontal centering on larger screens */
     max-width: 1200px;
     border-radius: var(--border-radius-md);
@@ -150,12 +154,12 @@ main {
 
 /* Forms - General Styling */
 .form-group {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md); /* Increased margin */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm); /* Increased margin */
     color: var(--secondary-text-color);
     font-weight: 600;
 }
@@ -167,12 +171,12 @@ input[type="password"],
 input[type="date"],
 select,
 textarea {
-    width: calc(100% - (var(--spacing-xs) * 2));
+    width: 100%; /* Changed from calc() for simplicity */
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-sm);
     font-size: 1em;
-    background-color: var(--primary-dark-bg);
+    background-color: var(--secondary-dark-bg); /* Changed to secondary for contrast */
     color: var(--primary-text-color);
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -186,7 +190,7 @@ input[type="date"]:focus,
 select:focus,
 textarea:focus {
     border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* A more subtle focus shadow */
     outline: none;
 }
 
@@ -201,27 +205,29 @@ button[type="submit"],
     cursor: pointer;
     font-size: 1em;
     font-weight: 700;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all var(--transition-speed) ease; /* Animate all properties */
     margin-top: var(--spacing-sm);
     width: auto; /* Default for desktop */
 }
 
 button[type="submit"]:hover,
 .action-button:hover {
-    background-color: #3A7BBF;
+    background-color: #0056b3; /* A darker shade of blue for hover */
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--card-shadow);
 }
 
 button[type="submit"]:active,
 .action-button:active {
     transform: translateY(0);
+    box-shadow: none;
 }
 
 /* Tables - General Styling */
 .table-container {
     overflow-x: auto; /* Enables horizontal scrolling for tables if content overflows */
     margin-top: var(--spacing-md);
-    background-color: var(--primary-dark-bg);
+    background-color: var(--secondary-dark-bg);
     border-radius: var(--border-radius-md);
     box-shadow: 0 4px 8px var(--card-shadow);
 }
@@ -229,23 +235,24 @@ button[type="submit"]:active,
 table {
     width: 100%; /* Table takes full width of its container */
     border-collapse: collapse;
-    min-width: 500px; /* Ensures a minimum width for the table even on small screens */
+    min-width: 600px; /* Ensures a minimum width for the table even on small screens */
     /* This min-width will trigger overflow-x: auto on the container */
 }
 
 table thead th {
-    background-color: var(--border-color);
-    color: #fff;
+    background-color: var(--secondary-dark-bg); /* Changed to match container */
+    color: var(--primary-text-color);
     padding: 12px 15px;
     text-align: left;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9em;
     white-space: nowrap; /* Prevent header text from wrapping */
+    border-bottom: 2px solid var(--accent-blue); /* Added a border for a more premium look */
 }
 
 table tbody td {
-    padding: 10px 15px;
+    padding: 12px 15px; /* Increased padding */
     border-bottom: 1px solid var(--border-color);
     color: var(--secondary-text-color);
     font-size: 0.9em;
@@ -254,6 +261,7 @@ table tbody td {
     text-overflow: ellipsis; /* Show ellipsis for overflowing text */
     max-width: 250px; /* Limits the max width of cell content, adjust as needed */
     vertical-align: middle; /* Aligns content vertically */
+    transition: background-color var(--transition-speed) ease;
 }
 
 /* Special handling for description column to allow wrapping */
@@ -276,8 +284,9 @@ table tbody tr:last-child td {
     border-bottom: none; /* No border for the last row */
 }
 
-table tbody tr:hover {
+table tbody tr:hover td {
     background-color: var(--border-color); /* Highlight row on hover */
+    color: var(--primary-text-color);
 }
 
 /* Specific colors for transaction types in table */
@@ -299,13 +308,14 @@ table tbody tr:hover {
     border-radius: 4px;
     cursor: pointer;
     margin-right: 5px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 0.2s ease;
     font-size: 0.85em;
 }
 
 .action-buttons button:hover {
     background-color: var(--border-color);
     color: var(--primary-text-color);
+    transform: scale(1.05); /* Add a subtle scale animation on hover */
 }
 
 .action-buttons .edit-btn:hover {
@@ -324,7 +334,7 @@ footer {
     background-color: var(--secondary-dark-bg);
     color: var(--secondary-text-color);
     text-align: center;
-    padding: var(--spacing-sm) var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
     margin-top: auto;
     box-shadow: 0 -2px 5px var(--card-shadow);
 }
@@ -377,7 +387,7 @@ footer {
     cursor: pointer;
     font-size: 1em;
     font-weight: 700;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
     margin-top: 15px;
     width: fit-content;
     display: flex;
@@ -389,8 +399,9 @@ footer {
 }
 
 .google-signin-button:hover {
-    background-color: #3A7BBF;
+    background-color: #0056b3;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--card-shadow);
 }
 
 .google-signin-button img {
@@ -414,6 +425,12 @@ footer {
     display: flex; /* Use flexbox for centering content */
     align-items: center; /* Center vertically */
     justify-content: center; /* Center horizontally */
+    opacity: 0; /* Initially hidden for animation */
+    transition: opacity var(--transition-speed) ease;
+}
+
+.modal-overlay.active {
+    opacity: 1; /* Fade in */
 }
 
 .modal-content {
@@ -428,7 +445,7 @@ footer {
     position: relative; /* For close button positioning */
     transform: scale(0.95); /* Initial scale for animation */
     opacity: 0; /* Initial opacity for animation */
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    transition: all var(--transition-speed) ease;
 }
 
 /* Animation for modal appearance */
@@ -477,6 +494,7 @@ footer {
     filter: blur(3px);
     pointer-events: none;
     user-select: none;
+    transition: filter var(--transition-speed) ease;
 }
 
 

@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // --- Injecting animation styles directly into the document ---
+    // This keeps the animation logic contained within this script.
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes row-fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .row-fade-in {
+            animation: row-fade-in 0.4s ease-out forwards;
+        }
+    `;
+    document.head.appendChild(style);
+
+
     const auth = firebase.auth();
     const db = firebase.firestore();
 
@@ -21,10 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const transactionDate = document.getElementById('transaction-date');
     const transactionDescription = document.getElementById('transaction-description');
     const formMessage = document.getElementById('form-message');
-
-    // **UPDATED DOM SELECTIONS**
-    const formTitle = document.getElementById('modal-form-title'); // Now directly targeting by new ID
-    const formSubmitButton = document.getElementById('modal-submit-button'); // Now directly targeting by new ID
+    const formTitle = document.getElementById('modal-form-title');
+    const formSubmitButton = document.getElementById('modal-submit-button');
 
     // DOM elements for transaction list
     const transactionsTbody = document.getElementById('transactions-tbody');
@@ -39,56 +52,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const transactionListSection = document.getElementById('transaction-list');
     const transactionLoginPromptSection = document.getElementById('transaction-login-prompt');
 
-
     let currentUser = null;
     let editingTransactionId = null;
 
     // --- Initial setup ---
     addTransactionModal.style.display = 'none';
     mainContent.classList.remove('blur-background');
-    // Hide all transaction-related sections by default until user state is known
     transactionActionsSection.style.display = 'none';
     transactionListSection.style.display = 'none';
     transactionLoginPromptSection.style.display = 'none';
-
 
     // --- Authentication State Listener ---
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
-            console.log("Details: User logged in:", currentUser.uid);
-            transactionActionsSection.style.display = 'block'; // Show actions
-            transactionListSection.style.display = 'block'; // Show list
-            transactionLoginPromptSection.style.display = 'none'; // Hide login prompt
+            transactionActionsSection.style.display = 'block';
+            transactionListSection.style.display = 'block';
+            transactionLoginPromptSection.style.display = 'none';
             fetchAndDisplayTransactions();
         } else {
             currentUser = null;
-            console.log("Details: User logged out.");
-            transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #A0AEC0;">Please log in to view and add transactions.</td></tr>';
-            transactionActionsSection.style.display = 'none'; // Hide actions
-            transactionListSection.style.display = 'none'; // Hide list
-            transactionLoginPromptSection.style.display = 'block'; // Show login prompt
+            transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Please log in to view and add transactions.</td></tr>';
+            transactionActionsSection.style.display = 'none';
+            transactionListSection.style.display = 'none';
+            transactionLoginPromptSection.style.display = 'block';
             hideModal();
         }
     });
-
-    // ... (rest of the functions remain largely the same, but include the null checks for robustness) ...
 
     function showMessage(message, type = 'success') {
         formMessage.textContent = message;
         formMessage.className = `message ${type}`;
         formMessage.style.display = 'block';
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 5000);
+        setTimeout(() => { formMessage.style.display = 'none'; }, 5000);
     }
 
     function showModal() {
         mainContent.classList.add('blur-background');
         addTransactionModal.style.display = 'flex';
-        setTimeout(() => {
-            addTransactionModal.classList.add('active');
-        }, 10);
+        setTimeout(() => { addTransactionModal.classList.add('active'); }, 10);
     }
 
     function hideModal() {
@@ -103,71 +105,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function resetTransactionForm() {
         transactionForm.reset();
-        // Ensure formTitle and formSubmitButton are not null before setting textContent
-        if (formTitle) {
-            formTitle.textContent = 'Add New Transaction';
-        }
-        if (formSubmitButton) {
-            formSubmitButton.textContent = 'Add Transaction';
-        }
+        if (formTitle) formTitle.textContent = 'Add New Transaction';
+        if (formSubmitButton) formSubmitButton.textContent = 'Add Transaction';
         editingTransactionId = null;
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = (today.getMonth() + 1).toString().padStart(2, '0');
-        const day = today.getDate().toString().padStart(2, '0');
-        // Ensure transactionDate is not null before setting its value
         if (transactionDate) {
-            transactionDate.value = `${year}-${month}-${day}`;
+            transactionDate.valueAsDate = new Date();
         }
     }
 
-    openAddTransactionModalBtn.addEventListener('click', () => {
+    if(openAddTransactionModalBtn) openAddTransactionModalBtn.addEventListener('click', () => {
         resetTransactionForm();
         showModal();
     });
-    closeButton.addEventListener('click', hideModal);
-    addTransactionModal.addEventListener('click', (e) => {
-        if (e.target === addTransactionModal) {
-            hideModal();
-        }
+    if(closeButton) closeButton.addEventListener('click', hideModal);
+    if(addTransactionModal) addTransactionModal.addEventListener('click', (e) => {
+        if (e.target === addTransactionModal) hideModal();
     });
 
-    transactionForm.addEventListener('submit', async (e) => {
+    if(transactionForm) transactionForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         if (!currentUser) {
             showMessage('You must be logged in to add/update transactions.', 'error');
             return;
         }
-
-        const type = transactionType.value;
-        const amount = parseFloat(transactionAmount.value);
-        const category = transactionCategory.value.trim();
-        const date = new Date(transactionDate.value);
-        const description = transactionDescription.value.trim();
-
-        if (isNaN(amount) || amount <= 0) {
-            showMessage('Please enter a valid positive amount.', 'error');
-            return;
-        }
-        if (!category) {
-            showMessage('Please enter a category.', 'error');
-            return;
-        }
-        if (isNaN(date.getTime())) {
-            showMessage('Please select a valid date.', 'error');
-            return;
-        }
-
         const transactionData = {
             userId: currentUser.uid,
-            type: type,
-            amount: amount,
-            category: category,
-            date: firebase.firestore.Timestamp.fromDate(date),
-            description: description,
+            type: transactionType.value,
+            amount: parseFloat(transactionAmount.value),
+            category: transactionCategory.value.trim(),
+            date: firebase.firestore.Timestamp.fromDate(new Date(transactionDate.value)),
+            description: transactionDescription.value.trim(),
         };
-
         try {
             if (editingTransactionId) {
                 await db.collection('transactions').doc(editingTransactionId).update(transactionData);
@@ -177,80 +145,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 await db.collection('transactions').add(transactionData);
                 showMessage('Transaction added successfully!', 'success');
             }
-
             hideModal();
             fetchAndDisplayTransactions();
         } catch (error) {
             console.error("Error saving transaction:", error);
-            showMessage('Failed to save transaction: ' + error.message, 'error');
+            showMessage(`Failed to save transaction: ${error.message}`, 'error');
         }
     });
 
     async function fetchAndDisplayTransactions() {
         if (!currentUser) return;
-
-        transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #A0AEC0;">Fetching transactions...</td></tr>';
-
+        transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Fetching transactions...</td></tr>';
         let query = db.collection('transactions').where('userId', '==', currentUser.uid);
-
-        const selectedType = filterType.value;
-        if (selectedType !== 'all') {
-            query = query.where('type', '==', selectedType);
-        }
-
-        const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
-        const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
-
-        if (startDate) {
-            query = query.where('date', '>=', firebase.firestore.Timestamp.fromDate(startDate));
-        }
-        if (endDate) {
-            const endOfDay = new Date(endDate);
-            endOfDay.setHours(23, 59, 59, 999);
-            query = query.where('date', '<=', firebase.firestore.Timestamp.fromDate(endOfDay));
-        }
-
+        if (filterType.value !== 'all') query = query.where('type', '==', filterType.value);
+        if (filterStartDate.value) query = query.where('date', '>=', new Date(filterStartDate.value));
+        if (filterEndDate.value) query = query.where('date', '<=', new Date(filterEndDate.value));
         query = query.orderBy('date', 'desc');
 
         try {
             const snapshot = await query.get();
             transactionsTbody.innerHTML = '';
-
             if (snapshot.empty) {
-                transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #A0AEC0;">No transactions found.</td></tr>';
+                transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">No transactions found.</td></tr>';
                 return;
             }
-
-            snapshot.forEach(doc => {
+            snapshot.forEach((doc, index) => {
                 const transaction = doc.data();
                 const transactionId = doc.id;
-                const dateObj = transaction.date.toDate();
-
                 const row = transactionsTbody.insertRow();
+                
+                // Add the animation class with a staggered delay
+                row.className = 'row-fade-in';
+                row.style.animationDelay = `${index * 0.05}s`;
+
                 row.innerHTML = `
-                    <td>${dateObj.toLocaleDateString()}</td>
-                    <td class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
-                    <td>${transaction.category}</td>
-                    <td>TZS ${parseFloat(transaction.amount).toFixed(2)}</td>
-                    <td>${transaction.description || '-'}</td>
-                    <td class="action-buttons">
-                        <button class="edit-btn" data-id="${transactionId}">Edit</button>
-                        <button class="delete-btn" data-id="${transactionId}">Delete</button>
+                    <td data-label="Date">${transaction.date.toDate().toLocaleDateString()}</td>
+                    <td data-label="Type" class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
+                    <td data-label="Category">${transaction.category}</td>
+                    <td data-label="Amount">TZS ${parseFloat(transaction.amount).toFixed(2)}</td>
+                    <td data-label="Description" class="description-cell">${transaction.description || '-'}</td>
+                    <td data-label="Actions" class="action-buttons">
+                        <button class="edit-btn action-button" data-id="${transactionId}">Edit</button>
+                        <button class="delete-btn action-button" data-id="${transactionId}">Delete</button>
                     </td>
                 `;
-
                 row.querySelector('.edit-btn').addEventListener('click', () => editTransaction(transactionId, transaction));
                 row.querySelector('.delete-btn').addEventListener('click', () => deleteTransaction(transactionId));
             });
-
         } catch (error) {
             console.error("Error fetching transactions:", error);
-            transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #E74C3C;">Error loading transactions.</td></tr>';
+            transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger-red);">Error loading transactions.</td></tr>';
         }
     }
 
-    applyFiltersBtn.addEventListener('click', fetchAndDisplayTransactions);
-    clearFiltersBtn.addEventListener('click', () => {
+    if(applyFiltersBtn) applyFiltersBtn.addEventListener('click', fetchAndDisplayTransactions);
+    if(clearFiltersBtn) clearFiltersBtn.addEventListener('click', () => {
         filterType.value = 'all';
         filterStartDate.value = '';
         filterEndDate.value = '';
@@ -259,24 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function editTransaction(id, currentData) {
         editingTransactionId = id;
-
         transactionType.value = currentData.type;
         transactionAmount.value = currentData.amount;
         transactionCategory.value = currentData.category;
-        const dateObj = currentData.date.toDate();
-        const year = dateObj.getFullYear();
-        const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-        const day = dateObj.getDate().toString().padStart(2, '0');
-        transactionDate.value = `${year}-${month}-${day}`;
+        transactionDate.valueAsDate = currentData.date.toDate();
         transactionDescription.value = currentData.description || '';
-
-        if (formTitle) {
-            formTitle.textContent = 'Edit Transaction';
-        }
-        if (formSubmitButton) {
-            formSubmitButton.textContent = 'Update Transaction';
-        }
-
+        if (formTitle) formTitle.textContent = 'Edit Transaction';
+        if (formSubmitButton) formSubmitButton.textContent = 'Update Transaction';
         showModal();
     }
 
@@ -284,11 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
             try {
                 await db.collection('transactions').doc(id).delete();
-                showMessage('Transaction deleted successfully!', 'success');
+                // We don't show a message here, the row will just disappear after refetch
                 fetchAndDisplayTransactions();
             } catch (error) {
                 console.error("Error deleting transaction:", error);
-                showMessage('Failed to delete transaction: ' + error.message, 'error');
+                alert(`Failed to delete transaction: ${error.message}`);
             }
         }
     }

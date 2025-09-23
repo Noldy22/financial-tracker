@@ -2,104 +2,111 @@
 
 /*
     IMPORTANT: This file should ONLY contain styles specific to the transactions page.
-    General styles for body, header, nav, footer, section titles, and common responsive rules
+    General styles for body, header, nav, footer, section titles, modals, and forms
     should reside in style.css to avoid conflicts and maintain consistency.
     Variables are now ONLY in style.css.
 */
 
 #transaction-actions {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px; /* Increased margin for better spacing */
 }
 
-/* Note: .primary-button is now managed by .action-button in style.css */
+/* The main action button is already styled by .action-button in style.css */
 
 
 #transaction-list {
-    margin-top: var(--spacing-lg); /* Use variable */
-    background-color: var(--primary-dark-bg); /* Use variable */
-    border: 1px solid var(--border-color); /* Use variable */
-    border-radius: var(--border-radius-md); /* Use variable */
-    padding: var(--spacing-lg); /* Use variable */
-    box-shadow: 0 4px 8px var(--card-shadow); /* Use variable */
+    margin-top: var(--spacing-lg);
+    background-color: var(--secondary-dark-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-
+/* --- Filter Section Styling --- */
 .filters {
     display: flex;
-    flex-wrap: wrap; /* Allow filters to wrap */
-    gap: var(--spacing-sm); /* Use variable for consistency */
-    margin-bottom: var(--spacing-md); /* Use variable for consistency */
-    justify-content: center; /* Center filters */
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--primary-dark-bg); /* Darker background to stand out */
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
 }
 
 .filters select,
 .filters input[type="date"] {
-    flex: 1; /* Allow filter inputs to grow */
-    min-width: 150px; /* Minimum width for inputs */
-    padding: 10px;
-    border: 1px solid var(--border-color); /* Use variable */
-    border-radius: var(--border-radius-sm); /* Use variable */
-    background-color: var(--secondary-dark-bg); /* Use variable */
-    color: var(--primary-text-color); /* Use variable */
-    font-size: 0.95em;
+    flex: 1;
+    min-width: 180px; /* A bit more width for filters */
+    /* General input styling is inherited from style.css */
 }
 
+/* Style filter buttons */
 .filters button {
-    padding: 10px 20px;
+    padding: 12px 20px; /* Match global button padding */
     font-size: 0.95em;
-    background-color: var(--accent-blue); /* Use variable */
+    background-color: var(--accent-blue);
     color: white;
     border: none;
-    border-radius: var(--border-radius-sm); /* Use variable */
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    font-weight: 600;
 }
 
 .filters button:hover {
-    background-color: #3A7BBF; /* Slightly darker blue on hover */
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px);
 }
+
+/* Special styling for the 'Clear Filters' button */
+#clear-filters {
+    background-color: var(--border-color);
+}
+
+#clear-filters:hover {
+    background-color: #555; /* Darker grey on hover */
+}
+
 
 /* Message display for form submission feedback */
 .message {
     text-align: center;
     margin-top: 20px;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: var(--border-radius-sm);
     font-weight: bold;
     display: none; /* Hidden by default */
+    border: 1px solid transparent;
 }
 
 .message.success {
-    background-color: rgba(76, 175, 80, 0.2); /* Use RGBA with success-green base */
+    background-color: rgba(40, 167, 69, 0.1);
     color: var(--success-green);
-    border: 1px solid var(--success-green);
+    border-color: var(--success-green);
 }
 
 .message.error {
-    background-color: rgba(231, 76, 60, 0.2); /* Use RGBA with danger-red base */
+    background-color: rgba(220, 53, 69, 0.1);
     color: var(--danger-red);
-    border: 1px solid var(--danger-red);
+    border-color: var(--danger-red);
 }
 
 /* --- MODAL STYLES --- */
-/* Modal overlay and content styles are now in style.css */
+/* Modal overlay, content, and form styles are now primarily in style.css */
+/* This ensures the transaction form in the modal has the same premium look */
 
-/* Adjust transaction-entry section styles when inside the modal */
-/* This specific rule remains as it targets an element inside the modal context */
-.modal-content #transaction-entry {
-    margin-bottom: 0;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    box-shadow: none;
-}
-
-/* This is the form grid inside the modal, so it remains specific to details */
+/* This rule is for the form grid inside the modal, so it remains */
 #transaction-form {
     display: grid;
-    grid-template-columns: 1fr; /* Single column layout by default */
-    gap: 20px; /* Space between form groups */
+    grid-template-columns: 1fr;
+    gap: 20px;
     max-width: 100%;
     margin: 0;
 }
+
+/* Responsive grid for the form on larger screens (handled in style.css) */

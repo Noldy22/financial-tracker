@@ -11,16 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM elements for Dashboard Summary
     const usernameDisplay = document.getElementById('username-display');
     const currentBalanceEl = document.getElementById('current-balance');
-    const totalIncomeEl = document.getElementById('total-income'); // Added
-    const totalExpensesEl = document.getElementById('total-expenses'); // Added
+    const totalIncomeEl = document.getElementById('total-income');
+    const totalExpensesEl = document.getElementById('total-expenses');
     const todayExpenditureEl = document.getElementById('today-expenditure');
-    const monthlyIncomeEl = document.getElementById('monthly-income'); // Renamed from dashboard.js
-    const monthlyExpensesEl = document.getElementById('monthly-expenses'); // Renamed from dashboard.js
     const savingsGoalEl = document.getElementById('savings-goal');
     const savingsProgressEl = document.getElementById('savings-progress');
     const recentTransactionsTbody = document.getElementById('recent-transactions-tbody');
-    const spendingChartCanvas = document.getElementById('spendingChart');
-    let spendingChart = null; // To hold the Chart.js instance
+    let spendingChartCanvas = document.getElementById('spendingChart');
+    let spendingChart = null;
 
     // DOM elements for login/logout state management
     const dashboardLoginPrompt = document.getElementById('dashboard-login-prompt');
@@ -28,9 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const recentTransactionsSection = document.getElementById('recent-transactions');
     const spendingChartSection = document.getElementById('spending-chart');
 
-    let currentUser = null; // To store the logged-in user object
+    let currentUser = null;
 
-    // --- Initial Setup: Hide content until auth state is known ---
+    // --- Initial Setup ---
     dashboardLoginPrompt.style.display = 'none';
     dashboardSummarySection.style.display = 'none';
     recentTransactionsSection.style.display = 'none';
@@ -40,221 +38,226 @@ document.addEventListener('DOMContentLoaded', () => {
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
-            console.log("Dashboard: User logged in:", currentUser.uid);
-            dashboardLoginPrompt.style.display = 'none'; // Hide login prompt
-            dashboardSummarySection.style.display = 'block'; // Show summary
-            recentTransactionsSection.style.display = 'block'; // Show recent transactions
-            spendingChartSection.style.display = 'block'; // Show charts
+            dashboardLoginPrompt.style.display = 'none';
+            dashboardSummarySection.style.display = 'block';
+            recentTransactionsSection.style.display = 'block';
+            spendingChartSection.style.display = 'block';
 
-            // Display username or email
             if (usernameDisplay) {
-                usernameDisplay.textContent = currentUser.displayName || currentUser.email;
+                usernameDisplay.textContent = currentUser.displayName || currentUser.email.split('@')[0];
             }
-
-            fetchDashboardData(); // Fetch and display data for logged-in user
+            fetchDashboardData();
         } else {
             currentUser = null;
-            console.log("Dashboard: User logged out.");
-            dashboardLoginPrompt.style.display = 'block'; // Show login prompt
-            dashboardSummarySection.style.display = 'none'; // Hide summary
-            recentTransactionsSection.style.display = 'none'; // Hide recent transactions
-            spendingChartSection.style.display = 'none'; // Hide charts
-            // Clear any displayed data
+            dashboardLoginPrompt.style.display = 'block';
+            dashboardSummarySection.style.display = 'none';
+            recentTransactionsSection.style.display = 'none';
+            spendingChartSection.style.display = 'none';
+            
             if (currentBalanceEl) currentBalanceEl.textContent = 'TZS 0.00';
             if (totalIncomeEl) totalIncomeEl.textContent = 'TZS 0.00';
             if (totalExpensesEl) totalExpensesEl.textContent = 'TZS 0.00';
             if (todayExpenditureEl) todayExpenditureEl.textContent = 'TZS 0.00';
-            if (monthlyIncomeEl) monthlyIncomeEl.textContent = 'TZS 0.00';
-            if (monthlyExpensesEl) monthlyExpensesEl.textContent = 'TZS 0.00';
             if (savingsGoalEl) savingsGoalEl.textContent = 'TZS 0.00';
             if (savingsProgressEl) savingsProgressEl.textContent = 'TZS 0.00';
-            if (recentTransactionsTbody) recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #A0AEC0;">Please log in to view transactions.</td></tr>';
+            if (recentTransactionsTbody) recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--secondary-text-color);">Please log in to view transactions.</td></tr>';
+            
             if (spendingChart) {
-                spendingChart.destroy(); // Destroy chart when user logs out
+                spendingChart.destroy();
                 spendingChart = null;
             }
         }
     });
 
-    // --- Function to Fetch and Display Dashboard Data ---
-    async function fetchDashboardData() {
-        if (!currentUser) {
-            console.log("Dashboard: No user logged in, cannot fetch dashboard data.");
-            return;
+    // --- NEW: Helper function to calculate the correct font size ---
+    function getAdjustedFontSize(element, finalValue) {
+        if (!element || !element.parentElement) return 16; // Default size
+
+        const parent = element.parentElement;
+        const finalFormattedValue = `TZS ${finalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+        // Get the base font size from CSS
+        const baseFontSize = parseFloat(window.getComputedStyle(element).fontSize);
+        let currentFontSize = baseFontSize;
+
+        // Create a temporary span to measure the text width without causing screen flicker
+        const tempSpan = document.createElement('span');
+        tempSpan.style.fontSize = `${currentFontSize}px`;
+        tempSpan.style.fontFamily = window.getComputedStyle(element).fontFamily;
+        tempSpan.style.fontWeight = window.getComputedStyle(element).fontWeight;
+        tempSpan.style.visibility = 'hidden';
+        tempSpan.style.position = 'absolute';
+        tempSpan.textContent = finalFormattedValue;
+        document.body.appendChild(tempSpan);
+
+        // Calculate available width inside the parent card (accounting for padding)
+        const parentStyles = window.getComputedStyle(parent);
+        const availableWidth = parent.clientWidth - parseFloat(parentStyles.paddingLeft) - parseFloat(parentStyles.paddingRight);
+
+        // Reduce font size until it fits the available width
+        while (tempSpan.scrollWidth > availableWidth && currentFontSize > 12) {
+            currentFontSize--;
+            tempSpan.style.fontSize = `${currentFontSize}px`;
         }
 
-        let currentBalance = 0;
+        // Clean up the temporary span
+        document.body.removeChild(tempSpan);
+        return currentFontSize;
+    }
+
+    // --- REVISED: Function to Animate Number Counting with auto-sized font ---
+    function animateValue(element, start, end, duration) {
+        if (!element) return;
+        
+        // 1. Pre-calculate the final font size before starting the animation
+        const finalFontSize = getAdjustedFontSize(element, end);
+        element.style.fontSize = `${finalFontSize}px`; // 2. Apply this size for the entire animation
+
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const currentValue = Math.floor(progress * (end - start) + start);
+            
+            // 3. Animate the numbers as usual
+            element.textContent = `TZS ${currentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                // Ensure the final value is exactly correct after animation
+                element.textContent = `TZS ${end.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+
+    // --- Function to Fetch and Display Dashboard Data ---
+    async function fetchDashboardData() {
+        if (!currentUser) return;
+
         let totalIncome = 0;
         let totalExpenses = 0;
         let todayExpenditure = 0;
-        let monthlyIncome = 0;
-        let monthlyExpenses = 0;
-        // Savings Goal/Progress would need separate logic/Firestore document
-
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-
-        // For spending chart data
         const expenseCategories = {};
 
         try {
-            // Fetch all transactions for the current user, ordered by date
-            const snapshot = await db.collection('transactions')
-                .where('userId', '==', currentUser.uid)
-                .orderBy('date', 'desc') // Needed for recent transactions and possibly for full balance calculation efficiency
-                .get();
-
+            const snapshot = await db.collection('transactions').where('userId', '==', currentUser.uid).orderBy('date', 'desc').get();
             let recentTransactionsCount = 0;
-            recentTransactionsTbody.innerHTML = ''; // Clear recent transactions table
+            if (recentTransactionsTbody) recentTransactionsTbody.innerHTML = '';
 
             snapshot.forEach(doc => {
                 const transaction = doc.data();
                 const amount = parseFloat(transaction.amount);
-                const date = transaction.date.toDate(); // Convert Firestore Timestamp to Date object
-
-                // Calculate Current Balance (Total Income - Total Expenses)
+                const date = transaction.date.toDate();
                 if (transaction.type === 'income') {
-                    currentBalance += amount;
                     totalIncome += amount;
-                } else { // type === 'expense'
-                    currentBalance -= amount;
+                } else {
                     totalExpenses += amount;
-                }
-
-                // Calculate Today's Expenditure
-                if (date >= startOfToday && date <= endOfToday && transaction.type === 'expense') {
-                    todayExpenditure += amount;
-                }
-
-                // Calculate Monthly Income/Expenses
-                if (date >= startOfMonth && date <= endOfMonth) {
-                    if (transaction.type === 'income') {
-                        monthlyIncome += amount;
-                    } else { // type === 'expense'
-                        monthlyExpenses += amount;
-
-                        // Aggregate for Spending Chart
-                        const category = transaction.category || 'Uncategorized';
-                        expenseCategories[category] = (expenseCategories[category] || 0) + amount;
+                    if (date >= startOfToday) {
+                        todayExpenditure += amount;
                     }
+                    const category = transaction.category || 'Uncategorized';
+                    expenseCategories[category] = (expenseCategories[category] || 0) + amount;
                 }
-
-                // Display Recent Transactions (limit to 5)
-                if (recentTransactionsCount < 5) {
+                if (recentTransactionsTbody && recentTransactionsCount < 5) {
                     const row = recentTransactionsTbody.insertRow();
                     row.innerHTML = `
                         <td>${date.toLocaleDateString()}</td>
                         <td class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
                         <td>${transaction.category || '-'}</td>
                         <td>TZS ${amount.toFixed(2)}</td>
-                        <td>${transaction.description || '-'}</td>
+                        <td class="description-cell">${transaction.description || '-'}</td>
                     `;
                     recentTransactionsCount++;
                 }
             });
 
-            // If no recent transactions, display a message
-            if (recentTransactionsCount === 0) {
-                recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #A0AEC0;">No recent transactions.</td></tr>';
+            if (recentTransactionsTbody && recentTransactionsCount === 0) {
+                recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--secondary-text-color);">No recent transactions found.</td></tr>';
             }
 
+            const currentBalance = totalIncome - totalExpenses;
 
-            // Update Dashboard Summary UI - Added null checks for robustness
-            if (currentBalanceEl) currentBalanceEl.textContent = `TZS ${currentBalance.toFixed(2)}`;
-            if (totalIncomeEl) totalIncomeEl.textContent = `TZS ${totalIncome.toFixed(2)}`;
-            if (totalExpensesEl) totalExpensesEl.textContent = `TZS ${totalExpenses.toFixed(2)}`;
-            if (todayExpenditureEl) todayExpenditureEl.textContent = `TZS ${todayExpenditure.toFixed(2)}`;
-            if (monthlyIncomeEl) monthlyIncomeEl.textContent = `TZS ${monthlyIncome.toFixed(2)}`;
-            if (monthlyExpensesEl) monthlyExpensesEl.textContent = `TZS ${monthlyExpenses.toFixed(2)}`;
+            // Call the revised animation function
+            animateValue(currentBalanceEl, 0, currentBalance, 1500);
+            animateValue(totalIncomeEl, 0, totalIncome, 1500);
+            animateValue(totalExpensesEl, 0, totalExpenses, 1500);
+            animateValue(todayExpenditureEl, 0, todayExpenditure, 1500);
 
-            // Placeholder for Savings Goal/Progress - These would need user-defined goals in Firestore
-            if (savingsGoalEl) savingsGoalEl.textContent = 'TZS 0.00'; // Default or fetch from user profile
-            if (savingsProgressEl) savingsProgressEl.textContent = 'TZS 0.00'; // Calculate based on goal and income/expenses
+            if (savingsGoalEl) savingsGoalEl.textContent = 'TZS 0.00';
+            if (savingsProgressEl) savingsProgressEl.textContent = 'TZS 0.00';
 
-            // Render Spending Chart
             renderSpendingChart(expenseCategories);
 
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
-            // Display error messages on dashboard if elements exist
             if (currentBalanceEl) currentBalanceEl.textContent = 'Error';
-            if (recentTransactionsTbody) recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #E74C3C;">Error loading transactions.</td></tr>';
-            if (spendingChartCanvas) {
-                 const chartParent = spendingChartCanvas.parentElement;
-                 chartParent.innerHTML = `<p style="text-align: center; color: #E74C3C;">Error loading chart: ${error.message}. Please check console.</p>`;
-            }
+            if (recentTransactionsTbody) recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger-red);">Error loading transactions.</td></tr>';
         }
     }
 
-    // --- Chart.js Integration (Requires Chart.js library to be loaded in index.html) ---
+    // --- Chart.js Integration (No changes here) ---
     function renderSpendingChart(data) {
-        if (!spendingChartCanvas || typeof Chart === 'undefined') {
-            console.warn("Chart canvas not found or Chart.js not loaded.");
-            if (spendingChartCanvas) {
-                const chartParent = spendingChartCanvas.parentElement;
-                chartParent.innerHTML = `<p style="text-align: center; color: #A0AEC0;">Chart.js library not loaded or canvas missing. Cannot display chart.</p>`;
-            }
-            return;
-        }
-
+        if (!spendingChartCanvas || typeof Chart === 'undefined') return;
         const labels = Object.keys(data);
         const amounts = Object.values(data);
-
-        // Destroy existing chart if it exists
-        if (spendingChart) {
-            spendingChart.destroy();
-        }
-
+        if (spendingChart) spendingChart.destroy();
+        const chartParent = spendingChartCanvas.parentElement;
+        const existingP = chartParent.querySelector('p');
+        if (existingP) existingP.remove();
         if (labels.length === 0) {
-            // Display a message if no expense data
-            const chartParent = spendingChartCanvas.parentElement;
-            chartParent.innerHTML = `<canvas id="spendingChart"></canvas><p style="text-align: center; color: #A0AEC0;">No expense data to display for the current month.</p>`;
-            // Re-get the canvas as innerHTML replaced it
-            spendingChartCanvas = document.getElementById('spendingChart');
+            const p = document.createElement('p');
+            p.textContent = 'No expense data to display for your transactions.';
+            p.style.textAlign = 'center';
+            p.style.color = 'var(--secondary-text-color)';
+            chartParent.appendChild(p);
+            spendingChartCanvas.style.display = 'none';
             return;
         }
-
+        spendingChartCanvas.style.display = 'block';
         spendingChart = new Chart(spendingChartCanvas, {
-            type: 'pie', // Or 'doughnut', 'bar'
+            type: 'doughnut',
             data: {
                 labels: labels,
                 datasets: [{
                     data: amounts,
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
-                        '#C70039', '#FFC300', '#DAF7A6', '#FF5733', '#C0C0C0'
-                    ],
-                    hoverBackgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
-                        '#C70039', '#FFC300', '#DAF7A6', '#FF5733', '#C0C0C0'
-                    ]
+                    backgroundColor: ['#007BFF', '#28A745', '#DC3545', '#FFC107', '#17A2B8', '#6F42C1'],
+                    borderColor: 'var(--secondary-dark-bg)',
+                    borderWidth: 2,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                cutout: '70%',
                 plugins: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Spending by Category'
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'var(--primary-text-color)',
+                            font: { family: "'Inter', sans-serif" }
+                        }
                     },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
+                                if (label) label += ': ';
                                 if (context.parsed !== null) {
-                                    label += `TZS ${context.parsed.toFixed(2)}`;
+                                    label += `TZS ${context.parsed.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                                 }
                                 return label;
                             }
                         }
                     }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
                 }
             }
         });
