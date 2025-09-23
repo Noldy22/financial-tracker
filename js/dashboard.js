@@ -144,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     expenseCategories[category] = (expenseCategories[category] || 0) + amount;
                 }
 
-                // --- MODIFIED: Added data-label attributes to each <td> ---
                 if (recentTransactionsTbody && recentTransactionsCount < 5) {
                     const row = recentTransactionsTbody.insertRow();
                     row.innerHTML = `
@@ -181,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Chart.js Integration (No changes here) ---
+    // --- Chart.js Integration ---
     function renderSpendingChart(data) {
         if (!spendingChartCanvas || typeof Chart === 'undefined') return;
         const labels = Object.keys(data);
@@ -219,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: 'var(--primary-text-color)',
+                            // --- MODIFIED: Hardcoded the color for reliability ---
+                            color: '#E0E0E0', 
                             font: { family: "'Inter', sans-serif" }
                         }
                     },

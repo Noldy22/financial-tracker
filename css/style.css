@@ -329,7 +329,6 @@ table tbody tr:hover td {
     border-color: var(--danger-red);
 }
 
-
 /* Footer */
 footer {
     background-color: var(--secondary-dark-bg);
@@ -338,6 +337,36 @@ footer {
     padding: var(--spacing-md) var(--spacing-lg);
     margin-top: auto;
     box-shadow: 0 -2px 5px var(--card-shadow);
+}
+
+/* Google Sign-in Button Styling */
+.google-signin-button {
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.google-signin-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--card-shadow);
+}
+.google-signin-button img {
+    width: 20px;
+    height: 20px;
 }
 
 /* --- MODAL STYLES --- */
@@ -355,14 +384,12 @@ footer {
     margin-top: 10px;
     width: 120px;
 }
-/* Style for a secondary/cancel button */
 #confirm-btn-cancel {
     background-color: var(--border-color);
 }
 #confirm-btn-cancel:hover {
     background-color: #555;
 }
-/* Style for a primary/danger button */
 .confirm-modal-actions button.danger {
     background-color: var(--danger-red);
 }
@@ -370,9 +397,7 @@ footer {
     background-color: #c21a2b;
 }
 
-
 /* --- Responsive Design Media Queries --- */
-
 @media (max-width: 768px) {
     header {
         padding: var(--spacing-sm) var(--spacing-md);
@@ -395,64 +420,18 @@ footer {
     }
     .section-title { font-size: 1.5em; }
 
-    /* --- NEW: Mobile Table "Card" Layout --- */
-    .table-container {
-        overflow-x: hidden; /* Turn off horizontal scroll */
-    }
-    table {
-        min-width: 100%; /* Allow table to be flexible */
-        border: none;
-        box-shadow: none;
-    }
-    table thead {
-        display: none; /* Hide the desktop headers */
-    }
-    table tbody, table tr {
-        display: block; /* Make each row a block element */
-    }
-    table tr {
-        background-color: var(--secondary-dark-bg);
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius-md);
-        margin-bottom: var(--spacing-md);
-        padding: var(--spacing-sm);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    table td {
-        display: flex; /* Use flexbox for label/value alignment */
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 5px;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-        text-align: right; /* Align the data to the right */
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-        max-width: 100%;
-    }
-    table tr td:last-child {
-        border-bottom: none;
-    }
-    /* Use the data-label from HTML to create a header for each cell */
-    table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: var(--primary-text-color);
-        text-align: left;
-        margin-right: 10px;
-    }
-    /* Special handling for action buttons on mobile */
-    table td.action-buttons {
-        justify-content: center;
-        gap: 10px;
-    }
-    table td.action-buttons::before {
-        display: none; /* Hide the "Actions:" label */
-    }
-    .action-buttons button {
-        padding: 8px 16px; /* Bigger touch targets */
-    }
+    /* Mobile Table "Card" Layout */
+    .table-container { overflow-x: hidden; }
+    table { min-width: 100%; border: none; box-shadow: none; }
+    table thead { display: none; }
+    table tbody, table tr { display: block; }
+    table tr { background-color: var(--secondary-dark-bg); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md); padding: var(--spacing-sm); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border: none; border-bottom: 1px solid var(--border-color); text-align: right; white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; }
+    table tr td:last-child { border-bottom: none; }
+    table td::before { content: attr(data-label); font-weight: bold; color: var(--primary-text-color); text-align: left; margin-right: 10px; }
+    table td.action-buttons { justify-content: center; gap: 10px; }
+    table td.action-buttons::before { display: none; }
+    .action-buttons button { padding: 8px 16px; }
 
     /* Dashboard specific card adjustments for mobile */
     .summary-cards { flex-direction: column; align-items: center; gap: var(--spacing-md); }
@@ -465,8 +444,15 @@ footer {
     .filters select, .filters input[type="date"], .filters button { width: 100%; min-width: unset; }
     .modal-content { width: 95%; padding: 20px; }
     button[type="submit"], .action-button { width: 100%; }
+    
+    /* --- MODIFIED: Specific style for Google button on mobile --- */
+    .google-signin-button {
+        width: auto; /* Allow it to size to its content */
+        max-width: 90%; /* Prevent it from getting too wide */
+        padding: 12px 20px;
+        font-size: 0.95em;
+    }
 }
-
 
 /* Adjustments for medium screens (e.g., tablets - 769px to 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
