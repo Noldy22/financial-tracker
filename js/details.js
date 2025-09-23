@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial setup
     addTransactionModal.style.display = 'none';
-    confirmModal.style.display = 'none';
+    if(confirmModal) confirmModal.style.display = 'none';
     mainContent.classList.remove('blur-background');
     transactionActionsSection.style.display = 'none';
     transactionListSection.style.display = 'none';
@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
     
-    // Add/Edit Transaction Modal Logic
     if(openAddTransactionModalBtn) openAddTransactionModalBtn.addEventListener('click', () => {
         resetTransactionForm();
         showModal(addTransactionModal);
@@ -119,23 +118,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    confirmBtnOk.addEventListener('click', () => {
+    if(confirmBtnOk) confirmBtnOk.addEventListener('click', () => {
         if (resolveConfirm) resolveConfirm(true);
         hideModal(confirmModal);
     });
-    confirmBtnCancel.addEventListener('click', () => {
+    if(confirmBtnCancel) confirmBtnCancel.addEventListener('click', () => {
         if (resolveConfirm) resolveConfirm(false);
         hideModal(confirmModal);
     });
 
-    // Transaction Data Functions (Fetch, Edit, Delete)
+    // Transaction Data Functions
     async function fetchAndDisplayTransactions() {
         if (!currentUser) return;
         transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Fetching transactions...</td></tr>';
         let query = db.collection('transactions').where('userId', '==', currentUser.uid);
         if (filterType.value !== 'all') query = query.where('type', '==', filterType.value);
         if (filterStartDate.value) query = query.where('date', '>=', new Date(filterStartDate.value));
-        if (filterEndDate.value) query = query.where('date', '<=', new Date(filterEndDate.value));
+        if (filterEndDate.value) {
+            const endOfDay = new Date(filterEndDate.value);
+            endOfDay.setHours(23, 59, 59, 999);
+            query = query.where('date', '<=', endOfDay);
+        }
         query = query.orderBy('date', 'desc');
         try {
             const snapshot = await query.get();
@@ -200,8 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error deleting transaction:", error);
                 alert(`Failed to delete transaction: ${error.message}`);
             }
-        } else {
-            console.log('Deletion cancelled.');
         }
     }
 
@@ -213,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetTransactionForm() {
+        if(!transactionForm) return;
         transactionForm.reset();
         if (formTitle) formTitle.textContent = 'Add New Transaction';
         if (formSubmitButton) formSubmitButton.textContent = 'Add Transaction';

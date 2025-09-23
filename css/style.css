@@ -225,6 +225,13 @@ button[type="submit"]:active,
     box-shadow: none;
 }
 
+/* --- NEW: Small Button Style --- */
+.small-btn {
+    padding: 6px 12px;
+    font-size: 0.8em;
+    margin-top: 10px;
+}
+
 /* Tables - General Styling */
 .table-container {
     overflow-x: auto; /* Enables horizontal scrolling for tables if content overflows */
@@ -265,28 +272,25 @@ table tbody td {
     transition: background-color var(--transition-speed) ease;
 }
 
-/* Special handling for description column to allow wrapping */
-table tbody td.description-cell { /* You can add this class to your description td */
-    white-space: normal; /* Allow text to wrap */
-    word-break: break-word; /* Break long words if necessary */
-    max-width: 300px; /* Allow more width for descriptions */
+table tbody td.description-cell {
+    white-space: normal;
+    word-break: break-word;
+    max-width: 300px;
 }
-
 
 table tbody td.action-buttons {
-    white-space: nowrap; /* Ensure buttons stay on one line */
-    overflow: visible; /* Allow buttons to go outside if necessary */
-    text-overflow: clip; /* Don't add ellipsis to buttons */
-    min-width: 120px; /* Ensure enough space for action buttons */
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    min-width: 120px;
 }
 
-
 table tbody tr:last-child td {
-    border-bottom: none; /* No border for the last row */
+    border-bottom: none;
 }
 
 table tbody tr:hover td {
-    background-color: var(--border-color); /* Highlight row on hover */
+    background-color: var(--border-color);
     color: var(--primary-text-color);
 }
 
@@ -301,9 +305,16 @@ table tbody tr:hover td {
     color: var(--danger-red);
 }
 
+/* --- NEW: Savings transaction type color --- */
+#transactions-tbody .savings,
+#recent-transactions-tbody .savings {
+    color: var(--accent-blue);
+}
+
+
 .action-buttons button {
     background: none;
-    border: 1px solid var(--border-color); /* Subtle border for action buttons */
+    border: 1px solid var(--border-color);
     color: var(--secondary-text-color);
     padding: 6px 10px;
     border-radius: 4px;
@@ -316,7 +327,7 @@ table tbody tr:hover td {
 .action-buttons button:hover {
     background-color: var(--border-color);
     color: var(--primary-text-color);
-    transform: scale(1.05); /* Add a subtle scale animation on hover */
+    transform: scale(1.05);
 }
 
 .action-buttons .edit-btn:hover {
@@ -397,6 +408,30 @@ footer {
     background-color: #c21a2b;
 }
 
+/* --- NEW: Progress Bar Styles --- */
+.progress-bar-container {
+    width: 100%;
+    background-color: var(--border-color);
+    border-radius: var(--border-radius-sm);
+    margin-top: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+.progress-bar {
+    width: 0%; /* Starts at 0, updated by JS */
+    height: 100%;
+    background-color: var(--success-green);
+    border-radius: var(--border-radius-sm);
+    transition: width 0.5s ease-in-out;
+}
+#savings-percentage {
+    font-size: 0.8em;
+    color: var(--secondary-text-color);
+    margin-top: 5px;
+    display: block;
+}
+
+
 /* --- Responsive Design Media Queries --- */
 @media (max-width: 768px) {
     header {
@@ -445,10 +480,9 @@ footer {
     .modal-content { width: 95%; padding: 20px; }
     button[type="submit"], .action-button { width: 100%; }
     
-    /* --- MODIFIED: Specific style for Google button on mobile --- */
     .google-signin-button {
-        width: auto; /* Allow it to size to its content */
-        max-width: 90%; /* Prevent it from getting too wide */
+        width: auto;
+        max-width: 90%;
         padding: 12px 20px;
         font-size: 0.95em;
     }

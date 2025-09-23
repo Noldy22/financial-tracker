@@ -58,10 +58,15 @@
                 <div class="card">
                     <h3>Savings Goal</h3>
                     <p id="savings-goal">TZS 0.00</p>
+                    <button id="set-goal-btn" class="action-button small-btn">Set New Goal</button>
                 </div>
                 <div class="card">
                     <h3>Savings Progress</h3>
                     <p id="savings-progress">TZS 0.00</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <span id="savings-percentage">0%</span>
                 </div>
             </div>
         </section>
@@ -90,8 +95,23 @@
             <div class="chart-container">
                 <canvas id="spendingChart"></canvas>
             </div>
-            </section>
+        </section>
     </main>
+
+    <div id="savings-goal-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-button">&times;</span>
+            <form id="savings-goal-form">
+                <h2 class="section-title">Set Savings Goal</h2>
+                <div class="form-group">
+                    <label for="goal-amount">Goal Amount (TZS):</label>
+                    <input type="number" id="goal-amount" step="0.01" required placeholder="e.g., 1000000.00">
+                </div>
+                <button type="submit" class="action-button" style="width: 100%;">Set Goal</button>
+                <div id="goal-form-message" class="message"></div>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
