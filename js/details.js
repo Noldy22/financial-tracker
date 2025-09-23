@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- Injecting animation styles directly into the document ---
-    // This keeps the animation logic contained within this script.
     const style = document.createElement('style');
     style.textContent = `
         @keyframes row-fade-in {
@@ -18,17 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // MODAL specific DOM elements
     const addTransactionModal = document.getElementById('add-transaction-modal');
     const openAddTransactionModalBtn = document.getElementById('open-add-transaction-modal');
     const closeButton = addTransactionModal.querySelector('.close-button');
     const mainContent = document.getElementById('main-content');
-
-    // DOM elements for transaction form
     const transactionForm = document.getElementById('transaction-form');
     const transactionType = document.getElementById('transaction-type');
     const transactionAmount = document.getElementById('transaction-amount');
@@ -38,16 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const formMessage = document.getElementById('form-message');
     const formTitle = document.getElementById('modal-form-title');
     const formSubmitButton = document.getElementById('modal-submit-button');
-
-    // DOM elements for transaction list
     const transactionsTbody = document.getElementById('transactions-tbody');
     const filterType = document.getElementById('filter-type');
     const filterStartDate = document.getElementById('filter-start-date');
     const filterEndDate = document.getElementById('filter-end-date');
     const applyFiltersBtn = document.getElementById('apply-filters');
     const clearFiltersBtn = document.getElementById('clear-filters');
-
-    // Login/Logout sections
     const transactionActionsSection = document.getElementById('transaction-actions');
     const transactionListSection = document.getElementById('transaction-list');
     const transactionLoginPromptSection = document.getElementById('transaction-login-prompt');
@@ -55,14 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let editingTransactionId = null;
 
-    // --- Initial setup ---
     addTransactionModal.style.display = 'none';
     mainContent.classList.remove('blur-background');
     transactionActionsSection.style.display = 'none';
     transactionListSection.style.display = 'none';
     transactionLoginPromptSection.style.display = 'none';
 
-    // --- Authentication State Listener ---
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
@@ -169,15 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">No transactions found.</td></tr>';
                 return;
             }
+
             snapshot.forEach((doc, index) => {
                 const transaction = doc.data();
                 const transactionId = doc.id;
                 const row = transactionsTbody.insertRow();
-                
-                // Add the animation class with a staggered delay
                 row.className = 'row-fade-in';
                 row.style.animationDelay = `${index * 0.05}s`;
 
+                // --- MODIFIED: Added data-label attributes to each <td> ---
                 row.innerHTML = `
                     <td data-label="Date">${transaction.date.toDate().toLocaleDateString()}</td>
                     <td data-label="Type" class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
@@ -185,8 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td data-label="Amount">TZS ${parseFloat(transaction.amount).toFixed(2)}</td>
                     <td data-label="Description" class="description-cell">${transaction.description || '-'}</td>
                     <td data-label="Actions" class="action-buttons">
-                        <button class="edit-btn action-button" data-id="${transactionId}">Edit</button>
-                        <button class="delete-btn action-button" data-id="${transactionId}">Delete</button>
+                        <button class="edit-btn" data-id="${transactionId}">Edit</button>
+                        <button class="delete-btn" data-id="${transactionId}">Delete</button>
                     </td>
                 `;
                 row.querySelector('.edit-btn').addEventListener('click', () => editTransaction(transactionId, transaction));
@@ -222,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
             try {
                 await db.collection('transactions').doc(id).delete();
-                // We don't show a message here, the row will just disappear after refetch
                 fetchAndDisplayTransactions();
             } catch (error) {
                 console.error("Error deleting transaction:", error);
@@ -230,6 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
+    
     resetTransactionForm();
 });

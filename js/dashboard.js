@@ -69,18 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- NEW: Helper function to calculate the correct font size ---
+    // --- Helper function to calculate the correct font size ---
     function getAdjustedFontSize(element, finalValue) {
-        if (!element || !element.parentElement) return 16; // Default size
-
+        if (!element || !element.parentElement) return 16;
         const parent = element.parentElement;
         const finalFormattedValue = `TZS ${finalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-        // Get the base font size from CSS
         const baseFontSize = parseFloat(window.getComputedStyle(element).fontSize);
         let currentFontSize = baseFontSize;
-
-        // Create a temporary span to measure the text width without causing screen flicker
         const tempSpan = document.createElement('span');
         tempSpan.style.fontSize = `${currentFontSize}px`;
         tempSpan.style.fontFamily = window.getComputedStyle(element).fontFamily;
@@ -89,54 +84,39 @@ document.addEventListener('DOMContentLoaded', () => {
         tempSpan.style.position = 'absolute';
         tempSpan.textContent = finalFormattedValue;
         document.body.appendChild(tempSpan);
-
-        // Calculate available width inside the parent card (accounting for padding)
         const parentStyles = window.getComputedStyle(parent);
         const availableWidth = parent.clientWidth - parseFloat(parentStyles.paddingLeft) - parseFloat(parentStyles.paddingRight);
-
-        // Reduce font size until it fits the available width
         while (tempSpan.scrollWidth > availableWidth && currentFontSize > 12) {
             currentFontSize--;
             tempSpan.style.fontSize = `${currentFontSize}px`;
         }
-
-        // Clean up the temporary span
         document.body.removeChild(tempSpan);
         return currentFontSize;
     }
 
-    // --- REVISED: Function to Animate Number Counting with auto-sized font ---
+    // --- Function to Animate Number Counting with auto-sized font ---
     function animateValue(element, start, end, duration) {
         if (!element) return;
-        
-        // 1. Pre-calculate the final font size before starting the animation
         const finalFontSize = getAdjustedFontSize(element, end);
-        element.style.fontSize = `${finalFontSize}px`; // 2. Apply this size for the entire animation
-
+        element.style.fontSize = `${finalFontSize}px`;
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             const currentValue = Math.floor(progress * (end - start) + start);
-            
-            // 3. Animate the numbers as usual
             element.textContent = `TZS ${currentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             } else {
-                // Ensure the final value is exactly correct after animation
                 element.textContent = `TZS ${end.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
         };
         window.requestAnimationFrame(step);
     }
 
-
     // --- Function to Fetch and Display Dashboard Data ---
     async function fetchDashboardData() {
         if (!currentUser) return;
-
         let totalIncome = 0;
         let totalExpenses = 0;
         let todayExpenditure = 0;
@@ -163,14 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const category = transaction.category || 'Uncategorized';
                     expenseCategories[category] = (expenseCategories[category] || 0) + amount;
                 }
+
+                // --- MODIFIED: Added data-label attributes to each <td> ---
                 if (recentTransactionsTbody && recentTransactionsCount < 5) {
                     const row = recentTransactionsTbody.insertRow();
                     row.innerHTML = `
-                        <td>${date.toLocaleDateString()}</td>
-                        <td class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
-                        <td>${transaction.category || '-'}</td>
-                        <td>TZS ${amount.toFixed(2)}</td>
-                        <td class="description-cell">${transaction.description || '-'}</td>
+                        <td data-label="Date">${date.toLocaleDateString()}</td>
+                        <td data-label="Type" class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
+                        <td data-label="Category">${transaction.category || '-'}</td>
+                        <td data-label="Amount">TZS ${amount.toFixed(2)}</td>
+                        <td data-label="Description" class="description-cell">${transaction.description || '-'}</td>
                     `;
                     recentTransactionsCount++;
                 }
@@ -182,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const currentBalance = totalIncome - totalExpenses;
 
-            // Call the revised animation function
             animateValue(currentBalanceEl, 0, currentBalance, 1500);
             animateValue(totalIncomeEl, 0, totalIncome, 1500);
             animateValue(totalExpensesEl, 0, totalExpenses, 1500);

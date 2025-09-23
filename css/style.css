@@ -138,6 +138,8 @@ main {
     background-color: var(--primary-dark-bg);
     margin: var(--spacing-md) auto; /* Horizontal centering on larger screens */
     max-width: 1200px;
+    width: 100%;
+    box-sizing: border-box;
     border-radius: var(--border-radius-md);
     box-shadow: 0 4px 10px var(--card-shadow);
 }
@@ -236,7 +238,6 @@ table {
     width: 100%; /* Table takes full width of its container */
     border-collapse: collapse;
     min-width: 600px; /* Ensures a minimum width for the table even on small screens */
-    /* This min-width will trigger overflow-x: auto on the container */
 }
 
 table thead th {
@@ -290,13 +291,13 @@ table tbody tr:hover td {
 }
 
 /* Specific colors for transaction types in table */
-#transactions-tbody td:nth-child(2) { /* Targeting the 'Type' column */
-    font-weight: bold;
-}
-#transactions-tbody .income {
+#transactions-tbody .income,
+#recent-transactions-tbody .income {
     color: var(--success-green);
 }
-#transactions-tbody .expense {
+
+#transactions-tbody .expense,
+#recent-transactions-tbody .expense {
     color: var(--danger-red);
 }
 
@@ -339,407 +340,121 @@ footer {
     box-shadow: 0 -2px 5px var(--card-shadow);
 }
 
-/* Auth page specific form layout */
-.auth-container .form-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    position: relative;
-}
-
-.auth-container .form-group label {
-    flex-basis: 100px;
-    text-align: right;
-    margin-right: 15px;
-    margin-bottom: 0;
-    font-weight: 600;
-    color: var(--secondary-text-color);
-}
-
-/* Password Toggle Icon Styling */
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    color: var(--secondary-text-color);
-    font-size: 1.2em;
-    transition: color 0.2s ease;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 5px;
-}
-
-.toggle-password:hover {
-    color: var(--accent-blue);
-}
-
-.toggle-password.password-visible {
-    color: var(--accent-blue);
-}
-
-/* Google Sign-in Button Styling */
-.google-signin-button {
-    background-color: var(--accent-blue);
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: 700;
-    transition: all 0.3s ease;
-    margin-top: 15px;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.google-signin-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--card-shadow);
-}
-
-.google-signin-button img {
-    width: 20px;
-    height: 20px;
-}
-
-/* --- MODAL STYLES --- */
-.modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 2000; /* Sit on top of everything */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
-    backdrop-filter: blur(5px); /* Blur the background */
-    -webkit-backdrop-filter: blur(5px); /* Safari support */
-    display: flex; /* Use flexbox for centering content */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    opacity: 0; /* Initially hidden for animation */
-    transition: opacity var(--transition-speed) ease;
-}
-
-.modal-overlay.active {
-    opacity: 1; /* Fade in */
-}
-
-.modal-content {
-    background-color: var(--secondary-dark-bg);
-    margin: auto;
-    padding: 30px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    width: 90%; /* Adjust width as needed */
-    max-width: 700px; /* Max width for larger screens */
-    box-shadow: 0 5px 15px var(--card-shadow);
-    position: relative; /* For close button positioning */
-    transform: scale(0.95); /* Initial scale for animation */
-    opacity: 0; /* Initial opacity for animation */
-    transition: all var(--transition-speed) ease;
-}
-
-/* Animation for modal appearance */
-.modal-overlay.active .modal-content {
-    transform: scale(1);
-    opacity: 1;
-}
-
-.close-button {
-    color: var(--secondary-text-color);
-    font-size: 32px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: var(--primary-text-color);
-    text-decoration: none;
-}
-
-/* Adjust transaction-entry section styles when inside the modal */
-.modal-content #transaction-entry {
-    margin-bottom: 0;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    box-shadow: none;
-}
-
-#transaction-form {
-    display: grid;
-    grid-template-columns: 1fr; /* Single column layout by default */
-    gap: 20px; /* Space between form groups */
-    max-width: 100%;
-    margin: 0;
-}
-
-
-/* Blur effect for main content */
-.blur-background {
-    filter: blur(3px);
-    pointer-events: none;
-    user-select: none;
-    transition: filter var(--transition-speed) ease;
-}
+/* --- MODAL STYLES (No changes, already responsive) --- */
+.modal-overlay { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity var(--transition-speed) ease; }
+.modal-overlay.active { opacity: 1; }
+.modal-content { background-color: var(--secondary-dark-bg); margin: auto; padding: 30px; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); width: 90%; max-width: 700px; box-shadow: 0 5px 15px var(--card-shadow); position: relative; transform: scale(0.95); opacity: 0; transition: all var(--transition-speed) ease; }
+.modal-overlay.active .modal-content { transform: scale(1); opacity: 1; }
+.close-button { color: var(--secondary-text-color); font-size: 32px; font-weight: bold; position: absolute; top: 10px; right: 20px; cursor: pointer; transition: color 0.3s ease; }
+.close-button:hover, .close-button:focus { color: var(--primary-text-color); text-decoration: none; }
+#transaction-form { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 100%; margin: 0; }
+.blur-background { filter: blur(3px); pointer-events: none; user-select: none; transition: filter var(--transition-speed) ease; }
 
 
 /* --- Responsive Design Media Queries --- */
 
-/* Mobile & Tablet Styles (up to 768px) */
 @media (max-width: 768px) {
     header {
         padding: var(--spacing-sm) var(--spacing-md);
         flex-wrap: nowrap;
     }
+    header h1 { font-size: 1.5em; }
+    .hamburger-menu { display: block; }
+    header nav { position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--secondary-dark-bg); box-shadow: 0 5px 10px var(--card-shadow); overflow: hidden; max-height: 0; transition: max-height 0.3s ease-in-out; z-index: 999; display: block; }
+    header nav.active { max-height: 300px; }
+    header nav ul { flex-direction: column; align-items: center; gap: 0; padding: var(--spacing-sm) 0; width: 100%; display: flex; }
+    header nav ul li { width: 100%; text-align: center; margin: 0; }
+    header nav ul li a, header nav ul li button { width: 100%; box-sizing: border-box; display: block; padding: 12px 0; border-radius: 0; border: none; text-align: center; }
+    header nav ul li a.active { background-color: var(--accent-blue); color: var(--primary-dark-bg); }
+    header nav ul li a:hover, header nav ul li button:hover { background-color: var(--border-color); color: var(--accent-blue); }
 
-    /* Hamburger Menu */
-    .hamburger-menu {
-        display: block;
-    }
-
-    /* Navigation Container (Mobile) */
-    header nav {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: var(--secondary-dark-bg);
-        box-shadow: 0 5px 10px var(--card-shadow);
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height 0.3s ease-in-out;
-        z-index: 999;
-        display: block;
-    }
-
-    header nav.active {
-        max-height: 300px;
-    }
-
-    /* Navigation List (Mobile) */
-    header nav ul {
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        padding: var(--spacing-sm) 0;
-        width: 100%;
-        display: flex;
-    }
-    
-    header nav ul li {
-        width: 100%;
-        text-align: center;
-        margin: 0;
-    }
-
-    header nav ul li a,
-    header nav ul li button {
-        width: 100%;
-        box-sizing: border-box;
-        display: block;
-        padding: 12px 0;
-        border-radius: 0;
-        border: none;
-        text-align: center;
-    }
-    
-    header nav ul li a.active {
-        background-color: var(--accent-blue);
-        color: var(--primary-dark-bg);
-    }
-    header nav ul li a:hover,
-    header nav ul li button:hover {
-        background-color: var(--border-color);
-        color: var(--accent-blue);
-    }
-
-    /* General responsiveness for main content and forms */
     main {
-        margin: var(--spacing-sm); /* Reduced margin for smaller screens */
-        padding: var(--spacing-sm); /* Reduced padding for smaller screens */
+        margin: 0;
+        padding: var(--spacing-md);
+        border-radius: 0;
     }
+    .section-title { font-size: 1.5em; }
 
-    input[type="text"],
-    input[type="number"],
-    input[type="email"],
-    input[type="password"],
-    input[type="date"],
-    select,
-    textarea {
-        width: calc(100% - (var(--spacing-sm) * 2));
-        padding: 10px;
-    }
-
-    /* Table responsiveness (traditional table with scroll) */
+    /* --- NEW: Mobile Table "Card" Layout --- */
     .table-container {
-        /* On mobile, still rely on overflow-x auto */
-        padding: 0; /* Remove padding here, table will handle */
-        box-shadow: none; /* Remove outer shadow, table itself will have it */
+        overflow-x: hidden; /* Turn off horizontal scroll */
     }
-
     table {
-        min-width: 600px; /* Increased min-width for mobile tables to ensure scroll */
-        /* This ensures the table itself pushes past the screen width if needed, activating overflow-x */
-        box-shadow: 0 4px 8px var(--card-shadow); /* Re-added shadow to the table itself */
+        min-width: 100%; /* Allow table to be flexible */
+        border: none;
+        box-shadow: none;
     }
-
-    table thead th {
-        /* Headers remain visible on mobile for traditional table */
-        font-size: 0.8em; /* Slightly smaller font for headers */
-        padding: 10px 12px;
-        text-align: left; /* Ensure header is left-aligned */
+    table thead {
+        display: none; /* Hide the desktop headers */
     }
-    
-    table tbody td {
-        /* Cells remain as standard table cells */
-        white-space: nowrap; /* Keep content on one line */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 8px 12px; /* Slightly reduced padding */
-        font-size: 0.85em; /* Slightly smaller font for cells */
-        text-align: left; /* *** THIS IS THE KEY FIX FOR ALIGNMENT *** */
-    }
-
-    table tbody td.description-cell {
-        white-space: normal; /* Allow descriptions to wrap */
-        word-break: break-word;
-        max-width: 200px; /* Limit description width to prevent excessive stretching */
-    }
-    
-    /* Removed data-label specific CSS as we're not using the "cards" layout */
-    table thead, table tbody, table tr {
-        display: table-row-group; /* Reset to normal table display */
-        width: auto;
-    }
-    table td {
-        display: table-cell; /* Reset to normal table cell display */
-        width: auto;
-        padding-left: 12px; /* Reset padding */
-        position: static; /* Reset position */
-    }
-    table td::before {
-        content: none; /* Hide pseudo-elements (data-labels) */
+    table tbody, table tr {
+        display: block; /* Make each row a block element */
     }
     table tr {
-        margin-bottom: 0; /* Remove margin between rows */
-        border: none; /* Remove individual row borders */
-        border-radius: 0; /* Remove individual row border-radius */
-        background-color: transparent; /* Remove individual row background */
-        padding: 0; /* Remove individual row padding */
-        box-shadow: none; /* Remove individual row shadow */
+        background-color: var(--secondary-dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-sm);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-
+    table td {
+        display: flex; /* Use flexbox for label/value alignment */
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5px;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        text-align: right; /* Align the data to the right */
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        max-width: 100%;
+    }
+    table tr td:last-child {
+        border-bottom: none;
+    }
+    /* Use the data-label from HTML to create a header for each cell */
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--primary-text-color);
+        text-align: left;
+        margin-right: 10px;
+    }
+    /* Special handling for action buttons on mobile */
+    table td.action-buttons {
+        justify-content: center;
+        gap: 10px;
+    }
+    table td.action-buttons::before {
+        display: none; /* Hide the "Actions:" label */
+    }
+    .action-buttons button {
+        padding: 8px 16px; /* Bigger touch targets */
+    }
 
     /* Dashboard specific card adjustments for mobile */
-    .summary-cards {
-        flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-sm);
-    }
-
-    .card {
-        min-width: unset;
-        max-width: 95%;
-        padding: var(--spacing-sm);
-    }
-
-    .card h3 {
-        font-size: 1.1em;
-    }
-
-    .card p {
-        font-size: 1.8em;
-    }
-
-    #spending-chart {
-        padding: var(--spacing-sm);
-    }
+    .summary-cards { flex-direction: column; align-items: center; gap: var(--spacing-md); }
+    .card { min-width: unset; width: 100%; max-width: 100%; padding: var(--spacing-md); }
+    .card h3 { font-size: 1em; }
+    .card p { font-size: 2em; }
 
     /* Details specific filters and modal adjustments for mobile */
-    .filters {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .filters select,
-    .filters input[type="date"],
-    .filters button {
-        width: 100%;
-        min-width: unset;
-    }
-
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-    }
-    .close-button {
-        font-size: 28px;
-        top: 5px;
-        right: 15px;
-    }
-    button[type="submit"], .action-button {
-        width: 100%;
-    }
+    .filters { flex-direction: column; align-items: stretch; }
+    .filters select, .filters input[type="date"], .filters button { width: 100%; min-width: unset; }
+    .modal-content { width: 95%; padding: 20px; }
+    button[type="submit"], .action-button { width: 100%; }
 }
 
-/* Further adjustments for very small screens if needed for auth forms */
-@media (max-width: 500px) {
-    .auth-container .form-group {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .auth-container .form-group label {
-        flex-basis: auto;
-        text-align: left;
-        margin-right: 0;
-        margin-bottom: var(--spacing-xs);
-    }
-    .auth-container input[type="text"],
-    .auth-container input[type="email"],
-    .auth-container input[type="password"] {
-        width: 100%;
-    }
-    .toggle-password {
-        right: var(--spacing-sm);
-        top: calc(50% + 15px);
-        transform: translateY(-50%);
-    }
-}
 
 /* Adjustments for medium screens (e.g., tablets - 769px to 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .summary-cards {
-        gap: var(--spacing-md);
-        justify-content: space-around;
-    }
-    .card {
-        max-width: 45%;
-    }
-
-    #transaction-form {
-        grid-template-columns: 1fr 1fr;
-    }
-    #transaction-form .form-group:last-of-type {
-        grid-column: span 2;
-    }
-    #transaction-form button[type="submit"], .action-button {
-        grid-column: span 2;
-        max-width: 300px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+    main { max-width: 95%; }
+    .summary-cards { gap: var(--spacing-md); justify-content: space-around; }
+    .card { max-width: 45%; }
+    #transaction-form { grid-template-columns: 1fr 1fr; }
+    #transaction-form .form-group[style*="grid-column"], 
+    #transaction-form button[type="submit"] { grid-column: span 2; }
+    #transaction-form button[type="submit"] { max-width: 300px; margin-left: auto; margin-right: auto; }
 }
