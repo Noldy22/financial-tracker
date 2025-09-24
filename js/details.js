@@ -131,25 +131,41 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAndDisplayTransactions() {
         if (!currentUser) return;
         transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Fetching transactions...</td></tr>';
-        let query = db.collection('transactions').where('userId', '==', currentUser.uid);
-        if (filterType.value !== 'all') query = query.where('type', '==', filterType.value);
-        if (filterStartDate.value) query = query.where('date', '>=', new Date(filterStartDate.value));
-        if (filterEndDate.value) {
-            const endOfDay = new Date(filterEndDate.value);
-            endOfDay.setHours(23, 59, 59, 999);
-            query = query.where('date', '<=', endOfDay);
-        }
-        query = query.orderBy('date', 'desc');
+        
+        // 1. Fetch ALL transactions for the user, ordered by date.
+        let query = db.collection('transactions').where('userId', '==', currentUser.uid).orderBy('date', 'desc');
+
         try {
             const snapshot = await query.get();
+            let transactions = [];
+            snapshot.forEach(doc => {
+                transactions.push({ id: doc.id, ...doc.data() });
+            });
+
+            // 2. Apply filters on the client side.
+            const type = filterType.value;
+            const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
+            if (startDate) startDate.setHours(0, 0, 0, 0); // Set to start of day for comparison
+            const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
+            if (endDate) endDate.setHours(23, 59, 59, 999); // Set to end of day for comparison
+
+            const filteredTransactions = transactions.filter(transaction => {
+                const transactionDate = transaction.date.toDate();
+                const typeMatch = (type === 'all') || (transaction.type === type);
+                const startDateMatch = !startDate || (transactionDate >= startDate);
+                const endDateMatch = !endDate || (transactionDate <= endDate);
+                return typeMatch && startDateMatch && endDateMatch;
+            });
+
             transactionsTbody.innerHTML = '';
-            if (snapshot.empty) {
-                transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">No transactions found.</td></tr>';
+            if (filteredTransactions.length === 0) {
+                transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">No transactions found for the selected filters.</td></tr>';
                 return;
             }
-            snapshot.forEach((doc, index) => {
-                const transaction = doc.data();
-                const transactionId = doc.id;
+            
+            // 3. Display the filtered transactions
+            filteredTransactions.forEach((transaction, index) => {
+                const transactionId = transaction.id;
                 const row = transactionsTbody.insertRow();
                 row.className = 'row-fade-in';
                 row.style.animationDelay = `${index * 0.05}s`;
@@ -164,7 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="delete-btn" data-id="${transactionId}">Delete</button>
                     </td>
                 `;
-                row.querySelector('.edit-btn').addEventListener('click', () => editTransaction(transactionId, transaction));
+                // Re-creating the transaction data object to pass to editTransaction
+                const transactionData = { ...transaction };
+                delete transactionData.id;
+                row.querySelector('.edit-btn').addEventListener('click', () => editTransaction(transactionId, transactionData));
                 row.querySelector('.delete-btn').addEventListener('click', () => deleteTransaction(transactionId));
             });
         } catch (error) {
@@ -172,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger-red);">Error loading transactions.</td></tr>';
         }
     }
+
     if(applyFiltersBtn) applyFiltersBtn.addEventListener('click', fetchAndDisplayTransactions);
     if(clearFiltersBtn) clearFiltersBtn.addEventListener('click', () => {
         filterType.value = 'all';

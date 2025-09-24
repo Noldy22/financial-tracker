@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalIncome = 0;
         let totalExpenses = 0;
         let totalSavings = 0;
+        let totalWithdrawals = 0; // New variable for withdrawals
         let todayExpenditure = 0;
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -144,13 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'savings':
                         totalSavings += amount;
                         break;
+                    case 'withdraw': // Handle the new transaction type
+                        totalWithdrawals += amount;
+                        break;
                 }
 
                 if (recentTransactionsCount < 5) {
                     const row = recentTransactionsTbody.insertRow();
+                    // Capitalize the first letter of the transaction type
+                    const typeDisplay = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
                     row.innerHTML = `
                         <td data-label="Date">${date.toLocaleDateString()}</td>
-                        <td data-label="Type" class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
+                        <td data-label="Type" class="${transaction.type}">${typeDisplay}</td>
                         <td data-label="Category">${transaction.category || '-'}</td>
                         <td data-label="Amount">TZS ${amount.toFixed(2)}</td>
                         <td data-label="Description" class="description-cell">${transaction.description || '-'}</td>
@@ -163,8 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 recentTransactionsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--secondary-text-color);">No recent transactions found.</td></tr>';
             }
 
-            // 3. Update UI
-            const currentBalance = totalIncome - totalExpenses - totalSavings;
+            // 3. Update UI with new calculations
+            const savingsBalance = totalSavings - totalWithdrawals;
+            const currentBalance = totalIncome - totalExpenses - totalSavings + totalWithdrawals;
+
             animateValue(currentBalanceEl, 0, currentBalance, 1500);
             animateValue(totalIncomeEl, 0, totalIncome, 1500);
             animateValue(totalExpensesEl, 0, totalExpenses, 1500);
@@ -172,10 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update Savings UI
             if(savingsGoalEl) savingsGoalEl.textContent = `TZS ${savingsGoal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            animateValue(savingsProgressEl, 0, totalSavings, 1500);
+            animateValue(savingsProgressEl, 0, savingsBalance, 1500);
             
             // Update Progress Bar
-            const progressPercent = (savingsGoal > 0) ? (totalSavings / savingsGoal) * 100 : 0;
+            const progressPercent = (savingsGoal > 0) ? (savingsBalance / savingsGoal) * 100 : 0;
             if(progressBar) progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
             if(savingsPercentage) savingsPercentage.textContent = `${progressPercent.toFixed(1)}% Complete`;
 
