@@ -460,17 +460,17 @@ footer {
     }
     .section-title { font-size: 1.5em; }
 
-    /* Mobile Table "Card" Layout */
+    /* Mobile Table "Card" Layout - Scoped to .table-container */
     .table-container { overflow-x: hidden; }
-    table { min-width: 100%; border: none; box-shadow: none; }
-    table thead { display: none; }
-    table tbody, table tr { display: block; }
-    table tr { background-color: var(--secondary-dark-bg); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md); padding: var(--spacing-sm); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border: none; border-bottom: 1px solid var(--border-color); text-align: right; white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; }
-    table tr td:last-child { border-bottom: none; }
-    table td::before { content: attr(data-label); font-weight: bold; color: var(--primary-text-color); text-align: left; margin-right: 10px; }
-    table td.action-buttons { justify-content: center; gap: 10px; }
-    table td.action-buttons::before { display: none; }
+    .table-container table { min-width: 100%; border: none; box-shadow: none; }
+    .table-container thead { display: none; }
+    .table-container tbody, .table-container tr { display: block; }
+    .table-container tr { background-color: var(--secondary-dark-bg); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-md); padding: var(--spacing-sm); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .table-container td { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border: none; border-bottom: 1px solid var(--border-color); text-align: right; white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; }
+    .table-container tr td:last-child { border-bottom: none; }
+    .table-container td::before { content: attr(data-label); font-weight: bold; color: var(--primary-text-color); text-align: left; margin-right: 10px; }
+    .table-container td.action-buttons { justify-content: center; gap: 10px; }
+    .table-container td.action-buttons::before { display: none; }
     .action-buttons button { padding: 8px 16px; }
 
     /* Dashboard specific card adjustments for mobile */

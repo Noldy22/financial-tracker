@@ -102,7 +102,6 @@
 }
 
 /* --- MODAL STYLES --- */
-/* This rule is for the form grid inside the modal, so it remains */
 #transaction-form {
     display: grid;
     grid-template-columns: 1fr;
@@ -114,12 +113,17 @@
 /* --- NEW: Report Preview Modal Styles --- */
 #report-modal-content {
     max-width: 800px; /* A good width for a printable report */
-    background-color: #fff; /* White background for a clean report look */
+    background-color: #e9ecef; /* Light grey background to see the page */
     color: #121212; /* Dark text for readability */
+    overflow-y: auto;
 }
 #report-preview {
-    padding: 20px;
+    padding: 2.5cm 2cm;
+    margin: 1rem auto;
+    background: #fff;
+    box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
     font-family: 'Times New Roman', Times, serif; /* A classic font for reports */
+    box-sizing: border-box;
 }
 #report-preview .report-header {
     text-align: center;
@@ -139,6 +143,8 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    /* Ensure table layout is fixed for the report */
+    min-width: 100% !important; 
 }
 /* IMPORTANT: Explicitly set colors to override global styles */
 #report-preview th, #report-preview td {
