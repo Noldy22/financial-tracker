@@ -110,31 +110,42 @@
     margin: 0;
 }
 
-/* --- NEW: Report Preview Modal Styles --- */
+/* --- Report Preview Modal Styles --- */
 #report-modal-content {
     max-width: 850px; /* A good width for a printable report */
     background-color: #e9ecef; /* Light grey background to see the page */
     color: #121212; /* Dark text for readability */
     overflow-y: auto;
-    /* Remove padding to allow scaling logic to work correctly */
     padding: 15px 0 !important;
 }
+/* Ensure the close button is visible on all screen sizes */
+#report-modal-content .close-button {
+    color: #000;
+    z-index: 2050; /* Ensure it's above the report content */
+    top: 5px;
+    right: 15px;
+    font-size: 2.5rem;
+    position: absolute; /* Changed from sticky for better compatibility */
+}
+#report-modal-content .close-button:hover {
+    color: var(--danger-red);
+}
+
 #report-preview {
-    /* Fixed width to simulate A4 paper, will be scaled down on small screens */
     width: 794px; 
-    margin: 0 auto; /* Center the page */
+    margin: 0 auto;
     padding: 75px;
     background: #fff;
     box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
-    font-family: 'Times New Roman', Times, serif; /* A classic font for reports */
+    font-family: 'Times New Roman', Times, serif;
     box-sizing: border-box;
-    transform-origin: top center; /* Scale from the top */
-    transition: transform 0.2s ease-in-out; /* Smooth scaling */
+    transform-origin: top center;
+    transition: transform 0.2s ease-in-out;
 }
 #report-preview .report-header {
     text-align: center;
     margin-bottom: 30px;
-    border-bottom: 2px solid #adb5bd; /* Darker border */
+    border-bottom: 2px solid #adb5bd;
     padding-bottom: 15px;
 }
 #report-preview .report-header h2 {
@@ -143,7 +154,7 @@
 }
 #report-preview .report-header p {
     margin: 5px 0 0;
-    color: #343a40; /* Much darker grey for subtitle text */
+    color: #343a40;
 }
 #report-preview table {
     width: 100%;
@@ -151,22 +162,21 @@
     margin-top: 20px;
     min-width: 100% !important; 
 }
-/* IMPORTANT: Explicitly set colors to override global styles */
 #report-preview th, #report-preview td {
-    border: 1px solid #dee2e6; /* Consistent, visible border */
+    border: 1px solid #dee2e6;
     padding: 10px;
     text-align: left;
-    color: #212529; /* Dark text for all table content */
+    color: #212529;
 }
 #report-preview th {
-    background-color: #f8f9fa; /* Very light, clean grey background for headers */
+    background-color: #f8f9fa;
     font-weight: bold;
-    color: #000; /* Explicitly black for headers */
+    color: #000;
 }
 #report-preview .report-summary {
     margin-top: 30px;
     padding-top: 15px;
-    border-top: 2px solid #adb5bd; /* Darker border */
+    border-top: 2px solid #adb5bd;
     text-align: right;
 }
 #report-preview .report-summary p {
@@ -184,16 +194,15 @@
     padding-top: 10px;
     border-top: 1px solid #e9ecef;
     font-style: italic;
-    color: #6c757d; /* Darker grey for footer */
+    color: #6c757d;
     font-size: 0.9em;
 }
 .report-actions {
-    /* Take full width inside the now-padding-less modal content */
     width: 100%;
     text-align: center;
     margin-top: 15px;
     padding: 20px 0;
-    background-color: var(--secondary-dark-bg); /* Match the app's theme */
+    background-color: var(--secondary-dark-bg);
     border-bottom-left-radius: var(--border-radius-lg);
     border-bottom-right-radius: var(--border-radius-lg);
 }
