@@ -112,18 +112,24 @@
 
 /* --- NEW: Report Preview Modal Styles --- */
 #report-modal-content {
-    max-width: 800px; /* A good width for a printable report */
+    max-width: 850px; /* A good width for a printable report */
     background-color: #e9ecef; /* Light grey background to see the page */
     color: #121212; /* Dark text for readability */
     overflow-y: auto;
+    /* Remove padding to allow scaling logic to work correctly */
+    padding: 15px 0 !important;
 }
 #report-preview {
-    padding: 2.5cm 2cm;
-    margin: 1rem auto;
+    /* Fixed width to simulate A4 paper, will be scaled down on small screens */
+    width: 794px; 
+    margin: 0 auto; /* Center the page */
+    padding: 75px;
     background: #fff;
     box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
     font-family: 'Times New Roman', Times, serif; /* A classic font for reports */
     box-sizing: border-box;
+    transform-origin: top center; /* Scale from the top */
+    transition: transform 0.2s ease-in-out; /* Smooth scaling */
 }
 #report-preview .report-header {
     text-align: center;
@@ -143,7 +149,6 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    /* Ensure table layout is fixed for the report */
     min-width: 100% !important; 
 }
 /* IMPORTANT: Explicitly set colors to override global styles */
@@ -183,9 +188,11 @@
     font-size: 0.9em;
 }
 .report-actions {
+    /* Take full width inside the now-padding-less modal content */
+    width: 100%;
     text-align: center;
-    margin-top: 20px;
-    padding: 20px;
+    margin-top: 15px;
+    padding: 20px 0;
     background-color: var(--secondary-dark-bg); /* Match the app's theme */
     border-bottom-left-radius: var(--border-radius-lg);
     border-bottom-right-radius: var(--border-radius-lg);

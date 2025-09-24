@@ -97,11 +97,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- NEW: Function to scale the report preview ---
+    function scaleReportPreview() {
+        if (!reportModal || reportModal.style.display !== 'flex') return;
+
+        const modalContent = document.getElementById('report-modal-content');
+        const availableWidth = modalContent.clientWidth;
+        
+        // Reset scale to measure natural width accurately
+        reportPreview.style.transform = 'scale(1)';
+        const previewWidth = reportPreview.offsetWidth;
+
+        if (previewWidth > availableWidth) {
+            const scaleFactor = availableWidth / previewWidth;
+            reportPreview.style.transform = `scale(${scaleFactor})`;
+        } else {
+            reportPreview.style.transform = 'scale(1)';
+        }
+    }
+    
     // Generic Modal Functions
     function showModal(modalElement) {
         mainContent.classList.add('blur-background');
         modalElement.style.display = 'flex';
-        setTimeout(() => { modalElement.classList.add('active'); }, 10);
+        setTimeout(() => { 
+            modalElement.classList.add('active');
+            // If it's the report modal, scale it
+            if (modalElement === reportModal) {
+                scaleReportPreview();
+            }
+        }, 10);
     }
 
     function hideModal(modalElement) {
@@ -112,6 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mainContent.classList.remove('blur-background');
             if (modalElement === addTransactionModal) {
                 resetTransactionForm();
+            }
+            // Reset report scale when hiding
+            if (modalElement === reportModal) {
+                reportPreview.style.transform = 'scale(1)';
             }
         }, 300);
     }
@@ -290,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- NEW: Report Generation Logic ---
+    // --- Report Generation Logic ---
     function generateReportHTML(transactions) {
         let totalIncome = 0;
         let totalExpenses = 0;
@@ -360,35 +389,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if(downloadPdfBtn) downloadPdfBtn.addEventListener('click', () => {
         const reportContent = document.getElementById('report-preview');
         
-        // Temporarily change style for PDF generation
-        reportModal.style.overflow = 'visible';
+        // Temporarily reset scale for full-quality PDF capture
+        reportContent.style.transform = 'scale(1)';
         
         html2canvas(reportContent, { scale: 2 }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
             const canvasWidth = canvas.width;
             const canvasHeight = canvas.height;
             const ratio = canvasWidth / canvasHeight;
             const imgHeight = pdfWidth / ratio;
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
-            heightLeft -= pdfHeight;
-
-            while (heightLeft >= 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
-                heightLeft -= pdfHeight;
-            }
             
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
             pdf.save('financial_report.pdf');
             
-            // Revert style after PDF generation
-            reportModal.style.overflow = 'auto'; 
+            // Re-apply scale for visual consistency after download
+            scaleReportPreview();
         });
     });
 
@@ -396,6 +413,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(reportModal) reportModal.addEventListener('click', (e) => {
         if (e.target === reportModal) hideModal(reportModal);
     });
+
+    // Add event listener to rescale report on window resize (e.g., mobile orientation change)
+    window.addEventListener('resize', scaleReportPreview);
 
     resetTransactionForm();
 });
