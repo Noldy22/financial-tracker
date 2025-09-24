@@ -1,8 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Ensure Firebase and PDF libraries are loaded
     if (typeof firebase === 'undefined' || typeof firebase.auth === 'undefined' || typeof firebase.firestore === 'undefined') {
-        console.error("Firebase SDKs not fully loaded. Ensure firebase-app-compat.js, firebase-auth-compat.js, and firebase-firestore-compat.js are linked before details.js.");
+        console.error("Firebase SDKs not fully loaded.");
         return;
     }
+    if (typeof jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+        console.error("jsPDF or html2canvas library not loaded.");
+        return;
+    }
+    const { jsPDF } = window.jspdf;
+
 
     const style = document.createElement('style');
     style.textContent = `
@@ -23,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.getElementById('main-content');
     const transactionsTbody = document.getElementById('transactions-tbody');
     const openAddTransactionModalBtn = document.getElementById('open-add-transaction-modal');
+    const printReportBtn = document.getElementById('print-report-btn');
     const filterType = document.getElementById('filter-type');
     const filterStartDate = document.getElementById('filter-start-date');
     const filterEndDate = document.getElementById('filter-end-date');
@@ -51,12 +59,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmBtnOk = document.getElementById('confirm-btn-ok');
     const confirmBtnCancel = document.getElementById('confirm-btn-cancel');
 
+    // Report Modal Elements
+    const reportModal = document.getElementById('report-modal');
+    const reportPreview = document.getElementById('report-preview');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    const reportModalCloseBtn = reportModal.querySelector('.close-button');
+
+
     let currentUser = null;
     let editingTransactionId = null;
+    let currentTransactions = []; // To store the currently displayed transactions
 
     // Initial setup
     addTransactionModal.style.display = 'none';
     if(confirmModal) confirmModal.style.display = 'none';
+    if(reportModal) reportModal.style.display = 'none';
     mainContent.classList.remove('blur-background');
     transactionActionsSection.style.display = 'none';
     transactionListSection.style.display = 'none';
@@ -132,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentUser) return;
         transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">Fetching transactions...</td></tr>';
         
-        // 1. Fetch ALL transactions for the user, ordered by date.
         let query = db.collection('transactions').where('userId', '==', currentUser.uid).orderBy('date', 'desc');
 
         try {
@@ -142,12 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 transactions.push({ id: doc.id, ...doc.data() });
             });
 
-            // 2. Apply filters on the client side.
             const type = filterType.value;
             const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
-            if (startDate) startDate.setHours(0, 0, 0, 0); // Set to start of day for comparison
+            if (startDate) startDate.setHours(0, 0, 0, 0); 
             const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
-            if (endDate) endDate.setHours(23, 59, 59, 999); // Set to end of day for comparison
+            if (endDate) endDate.setHours(23, 59, 59, 999);
 
             const filteredTransactions = transactions.filter(transaction => {
                 const transactionDate = transaction.date.toDate();
@@ -157,21 +172,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 return typeMatch && startDateMatch && endDateMatch;
             });
 
+            currentTransactions = filteredTransactions; // Store for reporting
+
             transactionsTbody.innerHTML = '';
             if (filteredTransactions.length === 0) {
                 transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--secondary-text-color);">No transactions found for the selected filters.</td></tr>';
                 return;
             }
             
-            // 3. Display the filtered transactions
             filteredTransactions.forEach((transaction, index) => {
                 const transactionId = transaction.id;
                 const row = transactionsTbody.insertRow();
                 row.className = 'row-fade-in';
                 row.style.animationDelay = `${index * 0.05}s`;
+                const typeDisplay = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
                 row.innerHTML = `
                     <td data-label="Date">${transaction.date.toDate().toLocaleDateString()}</td>
-                    <td data-label="Type" class="${transaction.type}">${transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
+                    <td data-label="Type" class="${transaction.type}">${typeDisplay}</td>
                     <td data-label="Category">${transaction.category}</td>
                     <td data-label="Amount">TZS ${parseFloat(transaction.amount).toFixed(2)}</td>
                     <td data-label="Description" class="description-cell">${transaction.description || '-'}</td>
@@ -180,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="delete-btn" data-id="${transactionId}">Delete</button>
                     </td>
                 `;
-                // Re-creating the transaction data object to pass to editTransaction
                 const transactionData = { ...transaction };
                 delete transactionData.id;
                 row.querySelector('.edit-btn').addEventListener('click', () => editTransaction(transactionId, transactionData));
@@ -191,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
             transactionsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger-red);">Error loading transactions.</td></tr>';
         }
     }
-
     if(applyFiltersBtn) applyFiltersBtn.addEventListener('click', fetchAndDisplayTransactions);
     if(clearFiltersBtn) clearFiltersBtn.addEventListener('click', () => {
         filterType.value = 'all';
@@ -273,6 +288,113 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error saving transaction:", error);
             showMessage(`Failed to save transaction: ${error.message}`, 'error');
         }
+    });
+
+    // --- NEW: Report Generation Logic ---
+    function generateReportHTML(transactions) {
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        
+        const tableRows = transactions.map(t => {
+            const amount = parseFloat(t.amount);
+            if (t.type === 'income') totalIncome += amount;
+            if (t.type === 'expense') totalExpenses += amount;
+            
+            const typeDisplay = t.type.charAt(0).toUpperCase() + t.type.slice(1);
+            return `
+                <tr>
+                    <td>${t.date.toDate().toLocaleDateString()}</td>
+                    <td>${typeDisplay}</td>
+                    <td>${t.category}</td>
+                    <td>TZS ${amount.toFixed(2)}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        const netChange = totalIncome - totalExpenses;
+        const dateRange = (filterStartDate.value && filterEndDate.value) 
+            ? `${new Date(filterStartDate.value).toLocaleDateString()} to ${new Date(filterEndDate.value).toLocaleDateString()}`
+            : 'All Time';
+
+        const username = currentUser.displayName || currentUser.email.split('@')[0];
+
+        return `
+            <div class="report-header">
+                <h2>${username}'s Financial Report</h2>
+                <p><strong>Date Range:</strong> ${dateRange}</p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+            <div class="report-summary">
+                <p><strong>Total Income:</strong> TZS ${totalIncome.toFixed(2)}</p>
+                <p><strong>Total Expenses:</strong> TZS ${totalExpenses.toFixed(2)}</p>
+                <p class="net-change"><strong>Net Change:</strong> TZS ${netChange.toFixed(2)}</p>
+            </div>
+            <div class="report-footer">
+                <p>Report generated by Noldy22 Financial Tracker.</p>
+            </div>
+        `;
+    }
+
+    if(printReportBtn) printReportBtn.addEventListener('click', () => {
+        if (currentTransactions.length === 0) {
+            alert("No transactions to report. Please clear filters or add transactions.");
+            return;
+        }
+        const reportHTML = generateReportHTML(currentTransactions);
+        reportPreview.innerHTML = reportHTML;
+        showModal(reportModal);
+    });
+
+    if(downloadPdfBtn) downloadPdfBtn.addEventListener('click', () => {
+        const reportContent = document.getElementById('report-preview');
+        
+        // Temporarily change style for PDF generation
+        reportModal.style.overflow = 'visible';
+        
+        html2canvas(reportContent, { scale: 2 }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const ratio = canvasWidth / canvasHeight;
+            const imgHeight = pdfWidth / ratio;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdfHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+            
+            pdf.save('financial_report.pdf');
+            
+            // Revert style after PDF generation
+            reportModal.style.overflow = 'auto'; 
+        });
+    });
+
+    if(reportModalCloseBtn) reportModalCloseBtn.addEventListener('click', () => hideModal(reportModal));
+    if(reportModal) reportModal.addEventListener('click', (e) => {
+        if (e.target === reportModal) hideModal(reportModal);
     });
 
     resetTransactionForm();

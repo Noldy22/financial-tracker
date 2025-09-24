@@ -12,7 +12,12 @@
     margin-bottom: 40px; /* Increased margin for better spacing */
 }
 
-/* The main action button is already styled by .action-button in style.css */
+.action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
 
 
 #transaction-list {
@@ -97,9 +102,6 @@
 }
 
 /* --- MODAL STYLES --- */
-/* Modal overlay, content, and form styles are now primarily in style.css */
-/* This ensures the transaction form in the modal has the same premium look */
-
 /* This rule is for the form grid inside the modal, so it remains */
 #transaction-form {
     display: grid;
@@ -109,4 +111,76 @@
     margin: 0;
 }
 
-/* Responsive grid for the form on larger screens (handled in style.css) */
+/* --- NEW: Report Preview Modal Styles --- */
+#report-modal-content {
+    max-width: 800px; /* A good width for a printable report */
+    background-color: #fff; /* White background for a clean report look */
+    color: #121212; /* Dark text for readability */
+}
+#report-preview {
+    padding: 20px;
+    font-family: 'Times New Roman', Times, serif; /* A classic font for reports */
+}
+#report-preview .report-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #adb5bd; /* Darker border */
+    padding-bottom: 15px;
+}
+#report-preview .report-header h2 {
+    margin: 0;
+    color: #000;
+}
+#report-preview .report-header p {
+    margin: 5px 0 0;
+    color: #343a40; /* Much darker grey for subtitle text */
+}
+#report-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+/* IMPORTANT: Explicitly set colors to override global styles */
+#report-preview th, #report-preview td {
+    border: 1px solid #dee2e6; /* Consistent, visible border */
+    padding: 10px;
+    text-align: left;
+    color: #212529; /* Dark text for all table content */
+}
+#report-preview th {
+    background-color: #f8f9fa; /* Very light, clean grey background for headers */
+    font-weight: bold;
+    color: #000; /* Explicitly black for headers */
+}
+#report-preview .report-summary {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 2px solid #adb5bd; /* Darker border */
+    text-align: right;
+}
+#report-preview .report-summary p {
+    margin: 5px 0;
+    font-size: 1.1em;
+    color: #212529;
+}
+#report-preview .report-summary .net-change {
+    font-weight: bold;
+    color: #000;
+}
+#report-preview .report-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+    font-style: italic;
+    color: #6c757d; /* Darker grey for footer */
+    font-size: 0.9em;
+}
+.report-actions {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: var(--secondary-dark-bg); /* Match the app's theme */
+    border-bottom-left-radius: var(--border-radius-lg);
+    border-bottom-right-radius: var(--border-radius-lg);
+}

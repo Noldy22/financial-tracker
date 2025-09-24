@@ -32,7 +32,10 @@
 
         <section id="transaction-actions">
             <h2 class="section-title">Manage Transactions</h2>
-            <button id="open-add-transaction-modal" class="action-button">Add New Transaction</button>
+            <div class="action-buttons-container">
+                <button id="open-add-transaction-modal" class="action-button">Add New Transaction</button>
+                <button id="print-report-btn" class="action-button">Print Report</button>
+            </div>
         </section>
 
         <section id="transaction-list">
@@ -116,6 +119,17 @@
         </div>
     </div>
 
+    <div id="report-modal" class="modal-overlay">
+        <div class="modal-content" id="report-modal-content">
+            <span class="close-button" aria-label="Close modal">&times;</span>
+            <div id="report-preview">
+                </div>
+            <div class="report-actions">
+                <button id="download-pdf-btn" class="action-button">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
 
     <footer>
         <p>&copy; 2025 Financial Tracker. All rights reserved.</p>
@@ -124,6 +138,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script src="js/main.js" defer></script> 
     <script src="js/details.js" defer></script>
