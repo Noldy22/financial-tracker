@@ -41,13 +41,15 @@
         <section id="transaction-list">
             <h2 class="section-title">Your Transactions</h2>
             <div class="filters">
-                <select id="filter-type">
-                    <option value="all">All Types</option>
-                    <option value="income">Income</option>
-                    <option value="expense">Expense</option>
-                    <option value="savings">Savings</option>
-                    <option value="withdraw">Withdrawal</option>
-                </select>
+                <div class="custom-select-wrapper">
+                    <select id="filter-type">
+                        <option value="all">All Types</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                        <option value="savings">Savings</option>
+                        <option value="withdraw">Withdrawal</option>
+                    </select>
+                </div>
                 <input type="date" id="filter-start-date" aria-label="Start Date">
                 <input type="date" id="filter-end-date" aria-label="End Date">
                 <button id="apply-filters" class="action-button">Apply Filters</button>
@@ -79,12 +81,14 @@
                 <h2 id="modal-form-title" class="section-title">Add New Transaction</h2>
                 <div class="form-group">
                     <label for="transaction-type">Type:</label>
-                    <select id="transaction-type" required>
-                        <option value="expense">Expense</option>
-                        <option value="income">Income</option>
-                        <option value="savings">Savings</option>
-                        <option value="withdraw">Withdraw from Savings</option>
-                    </select>
+                    <div class="custom-select-wrapper">
+                        <select id="transaction-type" required>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                            <option value="savings">Savings</option>
+                            <option value="withdraw">Withdraw from Savings</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="transaction-amount">Amount (TZS):</label>
